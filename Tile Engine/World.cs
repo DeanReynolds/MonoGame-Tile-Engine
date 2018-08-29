@@ -58,10 +58,10 @@ namespace Tile_Engine
             for (int x = 0; x < ChunksWidth; x++)
                 for (int y = 0; y < ChunksHeight; y++)
                     Chunks[x, y] = new Chunk() { Tiles = new Tile[Tile.Size, Tile.Size] };
-            BakedChunksWidth = ((int)Math.Ceiling(Screen.VirtualWidth / (float)Chunk.Size) + Chunk.TwoBufferX);
-            BakedChunksHeight = ((int)Math.Ceiling(Screen.VirtualHeight / (float)Chunk.Size) + Chunk.TwoBufferY);
-            int textureWidth = (BakedChunksWidth * Chunk.Size * Tile.Size);
-            int textureHeight = (BakedChunksHeight * Chunk.Size * Tile.Size);
+            BakedChunksWidth = ((int)Math.Ceiling((Screen.VirtualWidth / (float)Tile.Size) / Chunk.Size) + 1 + Chunk.TwoBufferX);
+            BakedChunksHeight = ((int)Math.Ceiling((Screen.VirtualHeight / (float)Tile.Size) / Chunk.Size) + 1 + Chunk.TwoBufferY);
+            int textureWidth = (BakedChunksWidth * Chunk.TextureSize);
+            int textureHeight = (BakedChunksHeight * Chunk.TextureSize);
             Texture = new RenderTarget2D(Program.Game.GraphicsDevice, textureWidth, textureHeight, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
             //Console.WriteLine(string.Format("World size (in tiles): {0}x{1}", tilesWidth, tilesHeight));
             //Console.WriteLine(string.Format("World size (in chunks): {0}x{1}", chunksWidth, chunksHeight));

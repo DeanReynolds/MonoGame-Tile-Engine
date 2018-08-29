@@ -40,6 +40,8 @@ namespace Tile_Engine
             IsMouseVisible = true;
             //IsFixedTimeStep = false;
             Screen.Mode = Screen.Modes.WindowedBorderless;
+            //Screen.VirtualWidth = 1920;
+            //Screen.VirtualHeight = 1080;
             _scene = new Scenes.Game(256);
             _output = new RenderTarget2D(GraphicsDevice, Screen.VirtualWidth, Screen.VirtualHeight, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
         }

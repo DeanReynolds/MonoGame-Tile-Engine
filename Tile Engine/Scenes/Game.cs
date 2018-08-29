@@ -11,7 +11,7 @@ namespace Tile_Engine.Scenes
 
         public Game(int maxPlayers)
         {
-            _world = World.Generate(400, 400);
+            _world = World.Generate(8400, 2400);
             _camera = new Camera(new Vector2((_world.Spawn.X * Tile.Size), (_world.Spawn.Y * Tile.Size)));
         }
 

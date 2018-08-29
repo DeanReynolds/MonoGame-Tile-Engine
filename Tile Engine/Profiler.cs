@@ -102,12 +102,12 @@ namespace Tile_Engine
                 foreach (string name in _profiles.Keys)
                 {
                     Profile profile = _profiles[name];
-                    const float nameSpacing = 300,
-                        iconSpacing = 150,
-                        iconSpacing2 = (iconSpacing * 2);
+                    const float iconSpacing = 150;
+                    const float iconSpacing2 = (iconSpacing * 2);
                     textPosition.Y += 2;
                     string text = name;
                     Vector2 textSize = (font.MeasureString(text) * _textScale2);
+                    float nameSpacing = (textPosition.X + (screenWidth / 1.625f));
                     spriteBatch.DrawString(font, text, new Vector2((textPosition.X + 1), (textPosition.Y + 1)), Color.Black, 0, new Vector2(0, (textSize.Y / 2)), _textScale2, SpriteEffects.None, .000001f);
                     spriteBatch.DrawString(font, text, textPosition, Color.White, 0, new Vector2(0, (textSize.Y / 2)), _textScale2, SpriteEffects.None, 0);
                     spriteBatch.Draw(LowestIcon, new Vector2((textPosition.X + nameSpacing), textPosition.Y), null, Color.White, 0, new Vector2(0, 20), _iconScale, SpriteEffects.None, 0);
