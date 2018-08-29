@@ -44,8 +44,6 @@
     <Compile Include="Camera.cs" />
     <Compile Include="Chunk.cs" />
     <Compile Include="Game1.cs" />
-    <Compile Include="Entities\Entity.cs" />
-    <Compile Include="Entities\Player.cs" />
     <Compile Include="Profiler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
