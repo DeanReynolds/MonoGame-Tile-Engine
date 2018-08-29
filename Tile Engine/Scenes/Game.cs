@@ -30,6 +30,26 @@ namespace Tile_Engine.Scenes
             //_camera.X = MathHelper.Clamp(_camera.X, virtualWidthOver2, ((_world.TilesWidth * Tile.Size) - virtualWidthOver2));
             float virtualHeightOver2 = (Screen.VirtualHeight / 2f);
             //_camera.Y = MathHelper.Clamp(_camera.X, virtualHeightOver2, ((_world.TilesWidth * Tile.Size) - virtualHeightOver2));
+            MouseState mouseState = Mouse.GetState();
+            _camera.UpdateMousePosition(mouseState);
+            int mouseTileX = -1;
+            int mouseTileY = -1;
+            if (mouseState.LeftButton == ButtonState.Pressed)
+            {
+                if (mouseTileX == -1)
+                    mouseTileX = (int)(_camera.MousePosition.X / Tile.Size);
+                if (mouseTileY == -1)
+                    mouseTileY = (int)(_camera.MousePosition.Y / Tile.Size);
+                _world.SetTileFore(mouseTileX, mouseTileY, Tile.Fores.Dirt);
+            }
+            if (mouseState.RightButton == ButtonState.Pressed)
+            {
+                if (mouseTileX == -1)
+                    mouseTileX = (int)(_camera.MousePosition.X / Tile.Size);
+                if (mouseTileY == -1)
+                    mouseTileY = (int)(_camera.MousePosition.Y / Tile.Size);
+                _world.SetTileFore(mouseTileX, mouseTileY, Tile.Fores.Stone);
+            }
             _world.Bake(_camera.X, _camera.Y, virtualWidthOver2, virtualHeightOver2);
             base.Update(gameTime);
         }

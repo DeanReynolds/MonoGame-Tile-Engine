@@ -72,6 +72,10 @@ namespace Tile_Engine
             spriteBatch.Draw(Texture, new Vector2(DrawOffsetX, DrawOffsetY), Color.White);
         }
 
+        public bool InChunkBounds(int chunkX, int chunkY) { return ((chunkX >= 0) && (chunkY >= 0) && (chunkX < ChunksWidth) && (chunkY < ChunksHeight)); }
+
+        public bool InTileBounds(int tileX, int tileY) { return ((tileX >= 0) && (tileY >= 0) && (tileX < TilesWidth) && (tileY < TilesHeight)); }
+
         public void Bake(float cameraX, float cameraY, float screenWidthOver2, float screenHeightOver2)
         {
             float cameraOffsetX = (cameraX - screenWidthOver2);
@@ -90,7 +94,6 @@ namespace Tile_Engine
             RawChunksMaxY = (((int)((cameraY + screenHeightOver2) / Tile.Size) >> Chunk.Bits) + 1 + Chunk.BufferY);
             ChunksMinY = Math.Max(0, RawChunksMinY);
             ChunksMaxY = Math.Min(ChunksLastIndexY, RawChunksMaxY);
-            //Console.WriteLine(string.Format("Chunks X: {0}-{1}, Y: {2}-{3} | Offsets: {4}, {5}", RawChunksMinX, ChunksMinX, ChunksMinY, ChunksMaxY, DrawOffsetX, DrawOffsetY));
             if ((RawChunksMinX != OldChunksMinX) || (RawChunksMaxX != OldChunksMaxX) || (RawChunksMinY != OldChunksMinY) || (RawChunksMaxY != OldChunksMaxY))
             {
                 Profiler.Start("Chunks/World Bake");
@@ -112,23 +115,7 @@ namespace Tile_Engine
                             }
                 foreach (Point point in chunksToUnload)
                     Chunks[point.X, point.Y].Dispose();
-                SpriteBatch spriteBatch = Program.Game.Services.GetService<SpriteBatch>();
-                Program.Game.GraphicsDevice.SetRenderTarget(Texture);
-                Program.Game.GraphicsDevice.Clear(Color.TransparentBlack);
-                spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, null, null);
-                int kReset = ((ChunksMinY - RawChunksMinY) * Chunk.TextureSize);
-                for (int x = RawChunksMinX, j = ((ChunksMinX - RawChunksMinX) * Chunk.TextureSize), k = kReset; x < RawChunksMaxX; x++, k = kReset)
-                    if ((x >= 0) && (x < ChunksWidth))
-                    {
-                        for (int y = RawChunksMinY; y < RawChunksMaxY; y++)
-                            if ((y >= 0) && (y < ChunksHeight))
-                            {
-                                spriteBatch.Draw(Chunks[x, y].Texture, new Rectangle(j, k, Chunk.TextureSize, Chunk.TextureSize), Color.White);
-                                k += Chunk.TextureSize;
-                            }
-                        j += Chunk.TextureSize;
-                    }
-                spriteBatch.End();
+                Bake();
                 Profiler.Stop("Chunks/World Bake");
                 OldChunksMinX = RawChunksMinX;
                 OldChunksMaxX = RawChunksMaxX;
@@ -138,8 +125,31 @@ namespace Tile_Engine
             }
         }
 
-        public Tile GetTile(int tileX, int tileY)
+        internal void Bake()
         {
+            SpriteBatch spriteBatch = Program.Game.Services.GetService<SpriteBatch>();
+            Program.Game.GraphicsDevice.SetRenderTarget(Texture);
+            Program.Game.GraphicsDevice.Clear(Color.TransparentBlack);
+            spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, null, null);
+            int kReset = ((ChunksMinY - RawChunksMinY) * Chunk.TextureSize);
+            for (int x = RawChunksMinX, j = ((ChunksMinX - RawChunksMinX) * Chunk.TextureSize), k = kReset; x < RawChunksMaxX; x++, k = kReset)
+                if ((x >= 0) && (x < ChunksWidth))
+                {
+                    for (int y = RawChunksMinY; y < RawChunksMaxY; y++)
+                        if ((y >= 0) && (y < ChunksHeight))
+                        {
+                            spriteBatch.Draw(Chunks[x, y].Texture, new Rectangle(j, k, Chunk.TextureSize, Chunk.TextureSize), Color.White);
+                            k += Chunk.TextureSize;
+                        }
+                    j += Chunk.TextureSize;
+                }
+            spriteBatch.End();
+        }
+
+        public Tile? GetTile(int tileX, int tileY)
+        {
+            if (!InTileBounds(tileX, tileY))
+                return null;
             int chunkX = (tileX >> Chunk.Bits);
             int chunkY = (tileY >> Chunk.Bits);
             int chunkTileX = (tileX & Chunk.Modulo);
@@ -147,22 +157,56 @@ namespace Tile_Engine
             return Chunks[chunkX, chunkY].Tiles[chunkTileX, chunkTileY];
         }
 
-        public void SetTileFore(int tileX, int tileY, Tile.Fores fore)
+        public bool SetTile(int tileX, int tileY, Tile.Fores fore, Tile.Backs back)
         {
+            if (!InTileBounds(tileX, tileY))
+                return false;
             int chunkX = (tileX >> Chunk.Bits);
             int chunkY = (tileY >> Chunk.Bits);
             int chunkTileX = (tileX & Chunk.Modulo);
             int chunkTileY = (tileY & Chunk.Modulo);
             Chunks[chunkX, chunkY].Tiles[chunkTileX, chunkTileY].Fore = fore;
+            Chunks[chunkX, chunkY].Tiles[chunkTileX, chunkTileY].Back = back;
+            if (Chunks[chunkX, chunkY].Texture != null)
+            {
+                Chunks[chunkX, chunkY].Bake();
+                Bake();
+            }
+            return true;
         }
 
-        public void SetTileBack(int tileX, int tileY, Tile.Backs back)
+        public bool SetTileFore(int tileX, int tileY, Tile.Fores fore)
         {
+            if (!InTileBounds(tileX, tileY))
+                return false;
+            int chunkX = (tileX >> Chunk.Bits);
+            int chunkY = (tileY >> Chunk.Bits);
+            int chunkTileX = (tileX & Chunk.Modulo);
+            int chunkTileY = (tileY & Chunk.Modulo);
+            Chunks[chunkX, chunkY].Tiles[chunkTileX, chunkTileY].Fore = fore;
+            if (Chunks[chunkX, chunkY].Texture != null)
+            {
+                Chunks[chunkX, chunkY].Bake();
+                Bake();
+            }
+            return true;
+        }
+
+        public bool SetTileBack(int tileX, int tileY, Tile.Backs back)
+        {
+            if (!InTileBounds(tileX, tileY))
+                return false;
             int chunkX = (tileX >> Chunk.Bits);
             int chunkY = (tileY >> Chunk.Bits);
             int chunkTileX = (tileX & Chunk.Modulo);
             int chunkTileY = (tileY & Chunk.Modulo);
             Chunks[chunkX, chunkY].Tiles[chunkTileX, chunkTileY].Back = back;
+            if (Chunks[chunkX, chunkY].Texture != null)
+            {
+                Chunks[chunkX, chunkY].Bake();
+                Bake();
+            }
+            return true;
         }
 
         public static World Generate(int tilesWidth, int tilesHeight)

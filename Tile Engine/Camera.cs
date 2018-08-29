@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 namespace Tile_Engine
 {
@@ -85,11 +86,15 @@ namespace Tile_Engine
             UpdateTransform();
         }
 
-        public void UpdateMousePosition()
+        public void UpdateMousePosition(MouseState? mouseState = null)
         {
-            //var mousePos = Mouse.Position.ToVector2();
-            //Vector2.Transform(ref mousePos, ref _invert, out mousePos);
-            //MousePosition = mousePos;
+            if (!mouseState.HasValue)
+                mouseState = Mouse.GetState();
+            Vector2 mousePos = mouseState.Value.Position.ToVector2();
+            mousePos.X = (((mousePos.X / Screen.WindowWidth) * Screen.VirtualWidth) - Screen.ViewportX);
+            mousePos.Y = (((mousePos.Y / Screen.WindowHeight) * Screen.VirtualHeight) - Screen.ViewportY);
+            Vector2.Transform(ref mousePos, ref _invert, out mousePos);
+            MousePosition = mousePos;
         }
 
         public void UpdateTransform()

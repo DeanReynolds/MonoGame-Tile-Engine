@@ -51,8 +51,14 @@ namespace Tile_Engine
             }
 #endif
         }
-        public static int ViewportWidth => Program.Game.GraphicsDevice.Viewport.Width;
-        public static int ViewportHeight => Program.Game.GraphicsDevice.Viewport.Height;
+        public static int ViewportX { get { return Program.Game.GraphicsDevice.Viewport.X; } }
+        public static int ViewportY { get { return Program.Game.GraphicsDevice.Viewport.Y; } }
+        public static int ViewportWidth { get { return Program.Game.GraphicsDevice.Viewport.Width; } }
+        public static int ViewportHeight { get { return Program.Game.GraphicsDevice.Viewport.Height; } }
+        public static int WindowWidth { get { return Program.Game.Window.ClientBounds.Width; } }
+        public static int WindowHeight { get { return Program.Game.Window.ClientBounds.Height; } }
+        public static int PreferredBackBufferWidth { get { return Program.Game.Services.GetService<GraphicsDeviceManager>().PreferredBackBufferWidth; } }
+        public static int PreferredBackBufferHeight { get { return Program.Game.Services.GetService<GraphicsDeviceManager>().PreferredBackBufferHeight; } }
         public static int VirtualWidth;
         public static int VirtualHeight;
 
