@@ -4,18 +4,9 @@ namespace Tile_Engine
 {
     public class Camera
     {
-        public static Matrix CreateScreenTranslation(float width, float height)
-        {
-            return Matrix.CreateTranslation((width / 2), (height / 2), 0);
-        }
-        public static Matrix CreateProjection(float width, float height)
-        {
-            return Matrix.CreateOrthographicOffCenter(0, width, height, 0, 0, 1);
-        }
-        public static Matrix CreateTransform(Matrix position, Matrix rotationZ, Matrix scale, Matrix screenTranslation)
-        {
-            return (position * rotationZ * scale * screenTranslation);
-        }
+        public static Matrix CreateScreenTranslation(float width, float height) { return Matrix.CreateTranslation((width / 2), (height / 2), 0); }
+        public static Matrix CreateProjection(float width, float height) { return Matrix.CreateOrthographicOffCenter(0, width, height, 0, 0, 1); }
+        public static Matrix CreateTransform(Matrix position, Matrix rotationZ, Matrix scale, Matrix screenTranslation) { return (position * rotationZ * scale * screenTranslation); }
 
         public float X
         {

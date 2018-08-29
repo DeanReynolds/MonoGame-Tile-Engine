@@ -39,7 +39,7 @@ namespace Tile_Engine
                 OnDeactivated(this, EventArgs.Empty);
             IsMouseVisible = true;
             //IsFixedTimeStep = false;
-            //Screen.Mode = Screen.Modes.WindowedBorderless;
+            Screen.Mode = Screen.Modes.WindowedBorderless;
             _scene = new Scenes.Game(256);
             _output = new RenderTarget2D(GraphicsDevice, Screen.VirtualWidth, Screen.VirtualHeight, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
         }
