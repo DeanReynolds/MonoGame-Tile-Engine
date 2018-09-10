@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 
-namespace Tile_Engine
+namespace Terraria_World
 {
 #if WINDOWS || LINUX
     public static class Program

@@ -1,9 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Terraria_World.Scenes;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using Tile_Engine.Scenes;
+using System.Collections.Generic;
 
-namespace Tile_Engine
+namespace Terraria_World
 {
     public class Game1 : Microsoft.Xna.Framework.Game
     {
@@ -11,6 +12,9 @@ namespace Tile_Engine
         public const long InactiveFrameRate = (TimeSpan.TicksPerSecond / 30);
 
         public static Texture2D Pixel { get; private set; }
+        public static Random Random;
+        public static Dictionary<Tile.Fores, ForeTileData> ForeTileData;
+        public static Dictionary<Tile.Backs, BackTileData> BackTileData;
 
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
@@ -42,6 +46,18 @@ namespace Tile_Engine
             Screen.Mode = Screen.Modes.WindowedBorderless;
             Screen.VirtualWidth = 1920;
             Screen.VirtualHeight = 1080;
+            Random = new Random();
+            ForeTileData = new Dictionary<Tile.Fores, ForeTileData>()
+            {
+                { Tile.Fores.Dirt, new ForeTileData(Content.Load<Texture2D>("Textures\\Tiles_0"), Terraria_World.ForeTileData.UVTypes.tile1, new[] { Tile.Fores.Dirt, Tile.Fores.Grass }) },
+                { Tile.Fores.Stone, new ForeTileData(Content.Load<Texture2D>("Textures\\Tiles_1"), Terraria_World.ForeTileData.UVTypes.tile1, new[] { Tile.Fores.Stone }) },
+                { Tile.Fores.Grass, new ForeTileData(Content.Load<Texture2D>("Textures\\Tiles_2"), Terraria_World.ForeTileData.UVTypes.tile2, new[] { Tile.Fores.Grass, Tile.Fores.Dirt }) }
+            };
+            BackTileData = new Dictionary<Tile.Backs, BackTileData>()
+            {
+                { Tile.Backs.Stone, new BackTileData(Content.Load<Texture2D>("Textures\\Wall_1")) },
+                { Tile.Backs.Dirt, new BackTileData(Content.Load<Texture2D>("Textures\\Wall_2")) },
+            };
             _scene = new Scenes.Game(256);
             _output = new RenderTarget2D(GraphicsDevice, Screen.VirtualWidth, Screen.VirtualHeight, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
             for (int i = 0; i < 33; i++)

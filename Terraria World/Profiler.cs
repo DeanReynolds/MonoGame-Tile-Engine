@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 
-namespace Tile_Engine
+namespace Terraria_World
 {
     public static class Profiler
     {

@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace Tile_Engine.Scenes
+namespace Terraria_World.Scenes
 {
     public class Game : Scene
     {
@@ -11,7 +11,7 @@ namespace Tile_Engine.Scenes
 
         public Game(int maxPlayers)
         {
-            _world = World.Generate(840, 240);
+            _world = World.Generate(2100, 300);
             _camera = new Camera(new Vector2((_world.Spawn.X * Tile.Size), (_world.Spawn.Y * Tile.Size)));
         }
 
@@ -42,7 +42,7 @@ namespace Tile_Engine.Scenes
                         mouseTileX = (int)(_camera.MousePosition.X / Tile.Size);
                     if (mouseTileY == -1)
                         mouseTileY = (int)(_camera.MousePosition.Y / Tile.Size);
-                    _world.SetTileFore(mouseTileX, mouseTileY, Tile.Fores.Dirt);
+                    _world.SetTileFore(mouseTileX, mouseTileY, Tile.Fores.Grass);
                 }
                 if (mouseState.RightButton == ButtonState.Pressed)
                 {
@@ -50,7 +50,7 @@ namespace Tile_Engine.Scenes
                         mouseTileX = (int)(_camera.MousePosition.X / Tile.Size);
                     if (mouseTileY == -1)
                         mouseTileY = (int)(_camera.MousePosition.Y / Tile.Size);
-                    _world.SetTileFore(mouseTileX, mouseTileY, Tile.Fores.None);
+                    _world.SetTileBack(mouseTileX, mouseTileY, Tile.Backs.Dirt);
                 }
             }
             _world.Bake(_camera.X, _camera.Y, virtualWidthOver2, virtualHeightOver2);
@@ -59,7 +59,7 @@ namespace Tile_Engine.Scenes
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, null, null);
+            spriteBatch.Begin(SpriteSortMode.BackToFront, null, SamplerState.PointClamp, null, null, null, null);
             _world.Draw(spriteBatch, gameTime);
             spriteBatch.End();
             base.Draw(spriteBatch, gameTime);

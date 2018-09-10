@@ -44,9 +44,7 @@ namespace Tile_Engine
                     if (Tiles[x, y].Fore == Tile.Fores.Dirt)
                         spriteBatch.Draw(Game1.Pixel, new Rectangle((x * Tile.Size), (y * Tile.Size), Tile.Size, Tile.Size), Color.Brown);
                     else if (Tiles[x, y].Fore == Tile.Fores.Stone)
-                        spriteBatch.Draw(Game1.Pixel, new Rectangle((x * Tile.Size), (y * Tile.Size), Tile.Size, Tile.Size), Color.Gray);
-                    //else
-                    //    spriteBatch.Draw(Game1.Pixel, new Rectangle((x * Tile.Size), (y * Tile.Size), Tile.Size, Tile.Size), Color.White);
+                        spriteBatch.Draw(Game1.Pixel, new Rectangle((x * Tile.Size), (y * Tile.Size), Tile.Size, Tile.Size), Color.Silver);
                 }
             spriteBatch.End();
         }

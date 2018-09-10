@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2042
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tile_Engine", "Tile Engine\Tile Engine.csproj", "{3A530118-6319-48F7-BC3A-A670CF7E995A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tile Engine", "Tile Engine\Tile Engine.csproj", "{3A530118-6319-48F7-BC3A-A670CF7E995A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Terraria World", "Terraria World\Terraria World.csproj", "{09D62113-ED87-438B-93B2-5B283459729A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{3A530118-6319-48F7-BC3A-A670CF7E995A}.Debug|x86.Build.0 = Debug|x86
 		{3A530118-6319-48F7-BC3A-A670CF7E995A}.Release|x86.ActiveCfg = Release|x86
 		{3A530118-6319-48F7-BC3A-A670CF7E995A}.Release|x86.Build.0 = Release|x86
+		{09D62113-ED87-438B-93B2-5B283459729A}.Debug|x86.ActiveCfg = Debug|x86
+		{09D62113-ED87-438B-93B2-5B283459729A}.Debug|x86.Build.0 = Debug|x86
+		{09D62113-ED87-438B-93B2-5B283459729A}.Release|x86.ActiveCfg = Release|x86
+		{09D62113-ED87-438B-93B2-5B283459729A}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
