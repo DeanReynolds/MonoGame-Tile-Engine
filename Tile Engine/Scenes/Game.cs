@@ -11,7 +11,7 @@ namespace Tile_Engine.Scenes
 
         public Game(int maxPlayers)
         {
-            _world = World.Generate(840, 240);
+            _world = WorldGenerator.Generate(500, 500);
             _camera = new Camera(new Vector2((_world.Spawn.X * Tile.Size), (_world.Spawn.Y * Tile.Size)));
         }
 
@@ -42,7 +42,7 @@ namespace Tile_Engine.Scenes
                         mouseTileX = (int)(_camera.MousePosition.X / Tile.Size);
                     if (mouseTileY == -1)
                         mouseTileY = (int)(_camera.MousePosition.Y / Tile.Size);
-                    _world.SetTileFore(mouseTileX, mouseTileY, Tile.Fores.Dirt);
+                    _world.SetTile(mouseTileX, mouseTileY, Tile.Types.Tile1);
                 }
                 if (mouseState.RightButton == ButtonState.Pressed)
                 {
@@ -50,7 +50,7 @@ namespace Tile_Engine.Scenes
                         mouseTileX = (int)(_camera.MousePosition.X / Tile.Size);
                     if (mouseTileY == -1)
                         mouseTileY = (int)(_camera.MousePosition.Y / Tile.Size);
-                    _world.SetTileFore(mouseTileX, mouseTileY, Tile.Fores.None);
+                    _world.SetTile(mouseTileX, mouseTileY, Tile.Types.None);
                 }
             }
             _world.Bake(_camera.X, _camera.Y, virtualWidthOver2, virtualHeightOver2);

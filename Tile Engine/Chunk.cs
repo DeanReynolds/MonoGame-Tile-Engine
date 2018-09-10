@@ -18,11 +18,6 @@ namespace Tile_Engine
         public static readonly int BufferXTextureSize = (BufferX * TextureSize);
         public static readonly int BufferYTextureSize = (BufferY * TextureSize);
 
-        //static Chunk()
-        //{
-        //    Console.WriteLine(string.Format("Bits: {0}, Size: {1}x, Texture Size: {2}x", Bits, Size, TextureSize));
-        //}
-
         public Tile[,] Tiles { get; internal set; }
 
         public RenderTarget2D Texture { get; private set; }
@@ -41,15 +36,22 @@ namespace Tile_Engine
             for (int x = 0; x < Size; x++)
                 for (int y = 0; y < Size; y++)
                 {
-                    if (Tiles[x, y].Fore == Tile.Fores.Dirt)
-                        spriteBatch.Draw(Game1.Pixel, new Rectangle((x * Tile.Size), (y * Tile.Size), Tile.Size, Tile.Size), Color.Brown);
-                    else if (Tiles[x, y].Fore == Tile.Fores.Stone)
-                        spriteBatch.Draw(Game1.Pixel, new Rectangle((x * Tile.Size), (y * Tile.Size), Tile.Size, Tile.Size), Color.Silver);
+                    if (Tiles[x, y].Type == Tile.Types.Tile1)
+                        spriteBatch.Draw(Game1.Pixel, new Rectangle((x * Tile.Size), (y * Tile.Size), Tile.Size, Tile.Size), Color.Red);
+                    else if (Tiles[x, y].Type == Tile.Types.Tile2)
+                        spriteBatch.Draw(Game1.Pixel, new Rectangle((x * Tile.Size), (y * Tile.Size), Tile.Size, Tile.Size), Color.Green);
+                    else if (Tiles[x, y].Type == Tile.Types.Tile3)
+                        spriteBatch.Draw(Game1.Pixel, new Rectangle((x * Tile.Size), (y * Tile.Size), Tile.Size, Tile.Size), Color.Blue);
+                    else if (Tiles[x, y].Type == Tile.Types.Tile4)
+                        spriteBatch.Draw(Game1.Pixel, new Rectangle((x * Tile.Size), (y * Tile.Size), Tile.Size, Tile.Size), Color.Yellow);
                 }
             spriteBatch.End();
         }
 
-        private void Texture_ContentLost(object sender, EventArgs e) { Bake(); }
+        private void Texture_ContentLost(object sender, EventArgs e)
+        {
+            Bake();
+        }
 
         public void Dispose()
         {

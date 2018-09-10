@@ -2,13 +2,12 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Tile_Engine
 {
     public class World
     {
-        public static Point[] dir8 = new[]
+        public static readonly Point[] dir8 = new[]
         {
             new Point(-1, -1), new Point(0, -1), new Point(1, -1),
             new Point(-1, 0), new Point(1, 0),
@@ -71,7 +70,12 @@ namespace Tile_Engine
             int textureWidth = (BakedChunksWidth * Chunk.TextureSize);
             int textureHeight = (BakedChunksHeight * Chunk.TextureSize);
             Texture = new RenderTarget2D(Program.Game.GraphicsDevice, textureWidth, textureHeight, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
-            //Console.WriteLine(string.Format("World size (in tiles): {0}x{1}", tilesWidth, tilesHeight));
+            Texture.ContentLost += Texture_ContentLost;
+        }
+
+        private void Texture_ContentLost(object sender, EventArgs e)
+        {
+            Bake();
         }
 
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
@@ -163,7 +167,7 @@ namespace Tile_Engine
             return Chunks[chunkX, chunkY].Tiles[chunkTileX, chunkTileY];
         }
 
-        public bool SetTile(int tileX, int tileY, Tile.Fores fore, Tile.Backs back)
+        public bool SetTile(int tileX, int tileY, Tile.Types type)
         {
             if (!InTileBounds(tileX, tileY))
                 return false;
@@ -171,21 +175,14 @@ namespace Tile_Engine
             int chunkY = (tileY >> Chunk.Bits);
             int chunkTileX = (tileX & Chunk.Modulo);
             int chunkTileY = (tileY & Chunk.Modulo);
-            if (Chunks[chunkX, chunkY].Tiles[chunkTileX, chunkTileY].Fore != fore)
+            return SetTile(chunkX, chunkY, chunkTileX, chunkTileY, type);
+        }
+
+        internal virtual bool SetTile(int chunkX, int chunkY, int chunkTileX, int chunkTileY, Tile.Types type)
+        {
+            if (Chunks[chunkX, chunkY].Tiles[chunkTileX, chunkTileY].Type != type)
             {
-                Chunks[chunkX, chunkY].Tiles[chunkTileX, chunkTileY].Fore = fore;
-                if (Chunks[chunkX, chunkY].Tiles[chunkTileX, chunkTileY].Back != back)
-                    Chunks[chunkX, chunkY].Tiles[chunkTileX, chunkTileY].Back = back;
-                if (Chunks[chunkX, chunkY].Texture != null)
-                {
-                    Chunks[chunkX, chunkY].Bake();
-                    Bake();
-                }
-                return true;
-            }
-            else if (Chunks[chunkX, chunkY].Tiles[chunkTileX, chunkTileY].Back != back)
-            {
-                Chunks[chunkX, chunkY].Tiles[chunkTileX, chunkTileY].Back = back;
+                Chunks[chunkX, chunkY].Tiles[chunkTileX, chunkTileY].Type = type;
                 if (Chunks[chunkX, chunkY].Texture != null)
                 {
                     Chunks[chunkX, chunkY].Bake();
@@ -194,90 +191,6 @@ namespace Tile_Engine
                 return true;
             }
             return false;
-        }
-
-        public bool SetTileFore(int tileX, int tileY, Tile.Fores fore)
-        {
-            if (!InTileBounds(tileX, tileY))
-                return false;
-            int chunkX = (tileX >> Chunk.Bits);
-            int chunkY = (tileY >> Chunk.Bits);
-            int chunkTileX = (tileX & Chunk.Modulo);
-            int chunkTileY = (tileY & Chunk.Modulo);
-            return SetTileFore(chunkX, chunkY, chunkTileX, chunkTileY, fore);
-        }
-
-        internal virtual bool SetTileFore(int chunkX, int chunkY, int chunkTileX, int chunkTileY, Tile.Fores fore)
-        {
-            if (Chunks[chunkX, chunkY].Tiles[chunkTileX, chunkTileY].Fore != fore)
-            {
-                Chunks[chunkX, chunkY].Tiles[chunkTileX, chunkTileY].Fore = fore;
-                if (Chunks[chunkX, chunkY].Texture != null)
-                {
-                    Chunks[chunkX, chunkY].Bake();
-                    Bake();
-                }
-                return true;
-            }
-            return false;
-        }
-
-        public bool SetTileBack(int tileX, int tileY, Tile.Backs back)
-        {
-            if (!InTileBounds(tileX, tileY))
-                return false;
-            int chunkX = (tileX >> Chunk.Bits);
-            int chunkY = (tileY >> Chunk.Bits);
-            int chunkTileX = (tileX & Chunk.Modulo);
-            int chunkTileY = (tileY & Chunk.Modulo);
-            if (Chunks[chunkX, chunkY].Tiles[chunkTileX, chunkTileY].Back != back)
-            {
-                Chunks[chunkX, chunkY].Tiles[chunkTileX, chunkTileY].Back = back;
-                if (Chunks[chunkX, chunkY].Texture != null)
-                {
-                    Chunks[chunkX, chunkY].Bake();
-                    Bake();
-                }
-                return true;
-            }
-            return false;
-        }
-
-        public static World Generate(int tilesWidth, int tilesHeight)
-        {
-            World world = new World(tilesWidth, tilesHeight);
-            tilesWidth = world.TilesWidth;
-            tilesHeight = world.TilesHeight;
-            Random random = new Random();
-            int minSurfaceY = (tilesHeight / 5);
-            int maxSurfaceY = (minSurfaceY + minSurfaceY);
-            int surfaceY = random.Next(minSurfaceY, (maxSurfaceY + 1));
-            int surfaceDepth = 8;
-            for (int tileX = 0; tileX < tilesWidth; tileX++)
-            {
-                if (tileX == (tilesWidth / 2))
-                    world.Spawn = new Point(tileX, (surfaceY - 1));
-                for (int tileY = surfaceY; tileY < tilesHeight; tileY++)
-                {
-                    int chunkX = (tileX >> Chunk.Bits);
-                    int chunkY = (tileY >> Chunk.Bits);
-                    int chunkTileX = (tileX & Chunk.Modulo);
-                    int chunkTileY = (tileY & Chunk.Modulo);
-                    if (tileY < (surfaceY + surfaceDepth))
-                    {
-                        world.Chunks[chunkX, chunkY].Tiles[chunkTileX, chunkTileY].Fore = Tile.Fores.Dirt;
-                        world.Chunks[chunkX, chunkY].Tiles[chunkTileX, chunkTileY].Back = Tile.Backs.Dirt;
-                    }
-                    else
-                    {
-                        world.Chunks[chunkX, chunkY].Tiles[chunkTileX, chunkTileY].Fore = Tile.Fores.Stone;
-                        world.Chunks[chunkX, chunkY].Tiles[chunkTileX, chunkTileY].Back = Tile.Backs.Stone;
-                    }
-                }
-                if (random.Next(3) == 1)
-                    surfaceY = Math.Min(maxSurfaceY, Math.Max(minSurfaceY, (surfaceY + random.Next(-1, 2))));
-            }
-            return world;
         }
     }
 }

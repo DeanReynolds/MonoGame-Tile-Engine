@@ -54,6 +54,7 @@
     <Compile Include="Tile.cs" />
     <Compile Include="ForeTileData.cs" />
     <Compile Include="World.cs" />
+    <Compile Include="WorldGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">

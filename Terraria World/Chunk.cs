@@ -45,6 +45,11 @@ namespace Terraria_World
             spriteBatch.End();
         }
 
+        private void Fore_ContentLost(object sender, EventArgs e)
+        {
+            BakeFore();
+        }
+
         public void BakeBack()
         {
             if (BackTexture == null)
@@ -64,11 +69,6 @@ namespace Terraria_World
                         spriteBatch.Draw(tileData.Texture, new Rectangle((x * Tile.Size), (y * Tile.Size), Tile.BackTextureSize, Tile.BackTextureSize), BackTileData.UV[Tiles[x, y].BackUV][Tiles[x, y].BackVariation], Color.White);
                     }
             spriteBatch.End();
-        }
-
-        private void Fore_ContentLost(object sender, EventArgs e)
-        {
-            BakeFore();
         }
 
         private void Back_ContentLost(object sender, EventArgs e)
