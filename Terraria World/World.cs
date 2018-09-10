@@ -55,13 +55,13 @@ namespace Terraria_World
                 chunksWidth = (tilesWidth >> Chunk.Bits);
             else
                 chunksWidth = ((tilesWidth >> Chunk.Bits) + 1);
-            TilesWidth = (chunksWidth * Chunk.Size);
+            tilesWidth = TilesWidth = (chunksWidth << Chunk.Bits);
             int chunksHeight;
             if ((tilesHeight >= Chunk.Size) && ((tilesHeight % Chunk.Size) == 0))
                 chunksHeight = (tilesHeight >> Chunk.Bits);
             else
                 chunksHeight = ((tilesHeight >> Chunk.Bits) + 1);
-            TilesHeight = (chunksHeight * Chunk.Size);
+            tilesHeight = TilesHeight = (chunksHeight << Chunk.Bits);
             Chunks = new Chunk[(ChunksWidth = chunksWidth), (ChunksHeight = chunksHeight)];
             ChunksLastIndexX = (ChunksWidth - 1);
             ChunksLastIndexY = (ChunksHeight - 1);

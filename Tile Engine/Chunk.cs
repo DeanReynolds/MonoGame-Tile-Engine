@@ -6,13 +6,13 @@ namespace Tile_Engine
 {
     public struct Chunk : IDisposable
     {
-        public const int Bits = 4;
+        public const int Bits = 3;
         public const int BufferX = 0;
         public const int TwoBufferX = (BufferX * 2);
         public const int BufferY = 0;
         public const int TwoBufferY = (BufferY * 2);
 
-        public static readonly int Size = (int)Math.Pow(Bits, 2);
+        public static readonly int Size = (int)Math.Pow(2, Bits);
         public static readonly int Modulo = (Size - 1);
         public static readonly int TextureSize = (Tile.Size * Size);
         public static readonly int BufferXTextureSize = (BufferX * TextureSize);
