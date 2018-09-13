@@ -32,7 +32,7 @@ namespace Terraria_World
         private static Dictionary<string, Profile> _profiles = new Dictionary<string, Profile>();
         private static bool _enabled = true;
 
-        static double _highestResetTimer;
+        static double _profileResetTimer;
 
         static Profiler()
         {
@@ -58,9 +58,9 @@ namespace Terraria_World
                 return;
             double totalMs = _profiles[name].Stopwatch.Elapsed.TotalMilliseconds;
             _profiles[name]._records[_profiles[name]._index++] = totalMs;
-            if (totalMs > _profiles[name].Highest)
+            if ((_profiles[name].Highest == null) || (totalMs > _profiles[name].Highest))
                 _profiles[name].Highest = totalMs;
-            if (totalMs < _profiles[name].Lowest)
+            if ((_profiles[name].Lowest == null) || (totalMs < _profiles[name].Lowest))
                 _profiles[name].Lowest = totalMs;
             if (_profiles[name]._index >= _profiles[name]._records.Length)
                 _profiles[name]._index = 0;
@@ -80,12 +80,12 @@ namespace Terraria_World
         {
             if (!_enabled)
                 return;
-            _highestResetTimer -= time.ElapsedGameTime.TotalSeconds;
-            if (_highestResetTimer <= 0)
+            _profileResetTimer -= time.ElapsedGameTime.TotalSeconds;
+            if (_profileResetTimer <= 0)
             {
                 foreach (Profile p in _profiles.Values)
-                    p.Highest = 0;
-                _highestResetTimer += 5;
+                    p.Lowest = p.Highest = null;
+                _profileResetTimer += 5;
             }
         }
 
@@ -110,7 +110,7 @@ namespace Terraria_World
                     spriteBatch.DrawString(font, text, textPosition, Color.White, 0, new Vector2(0, (textSize.Y / 2)), _textScale, SpriteEffects.None, 0);
                     textPosition.X += (screenWidth - timeTextsWidth - screenWidthOver20);
                     spriteBatch.Draw(LowestIcon, new Vector2(textPosition.X, textPosition.Y), null, Color.White, 0, new Vector2(0, 12), _iconScale, SpriteEffects.None, 0);
-                    text = string.Format("{0} ms", Math.Round(profile.Lowest, 3));
+                    text = string.Format("{0} ms", Math.Round((profile.Lowest ?? 0), 3));
                     textSize = (font.MeasureString(text) * _textScale);
                     textPosition.X += (iconWidth * _iconScale.X);
                     spriteBatch.DrawString(font, text, new Vector2((textPosition.X + 1), (textPosition.Y + 1)), Color.Black, 0, new Vector2(0, (textSize.Y / 2)), _textScale, SpriteEffects.None, .000001f);
@@ -124,7 +124,7 @@ namespace Terraria_World
                     spriteBatch.DrawString(font, text, new Vector2(textPosition.X, textPosition.Y), Color.White, 0, new Vector2(0, (textSize.Y / 2)), _textScale, SpriteEffects.None, 0);
                     textPosition.X += (maxTimeTextWidth * _textScale.X);
                     spriteBatch.Draw(HighestIcon, new Vector2(textPosition.X, textPosition.Y), null, Color.White, 0, new Vector2(0, 12), _iconScale, SpriteEffects.None, 0);
-                    text = string.Format("{0} ms", Math.Round(profile.Highest, 3));
+                    text = string.Format("{0} ms", Math.Round((profile.Highest ?? 0), 3));
                     textSize = (font.MeasureString(text) * _textScale);
                     textPosition.X += (iconWidth * _iconScale.X);
                     spriteBatch.DrawString(font, text, new Vector2((textPosition.X + 1), (textPosition.Y + 1)), Color.Black, 0, new Vector2(0, (textSize.Y / 2)), _textScale, SpriteEffects.None, .000001f);
@@ -139,9 +139,9 @@ namespace Terraria_World
         {
             public Stopwatch Stopwatch;
 
-            public double Lowest { get; internal set; }
+            public double? Lowest { get; internal set; }
             public double Average { get; internal set; }
-            public double Highest { get; internal set; }
+            public double? Highest { get; internal set; }
 
             internal byte _index;
             internal double[] _records;

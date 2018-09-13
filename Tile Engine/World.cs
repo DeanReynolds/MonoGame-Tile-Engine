@@ -65,8 +65,8 @@ namespace Tile_Engine
             for (int x = 0; x < ChunksWidth; x++)
                 for (int y = 0; y < ChunksHeight; y++)
                     Chunks[x, y] = new Chunk() { Tiles = new Tile[Tile.Size, Tile.Size] };
-            BakedChunksWidth = ((int)Math.Ceiling((Screen.VirtualWidth / (float)Tile.Size) / Chunk.Size) + 1 + Chunk.TwoBufferX);
-            BakedChunksHeight = ((int)Math.Ceiling((Screen.VirtualHeight / (float)Tile.Size) / Chunk.Size) + 1 + Chunk.TwoBufferY);
+            BakedChunksWidth = ((int)Math.Ceiling((Game1.VirtualWidth / (float)Tile.Size) / Chunk.Size) + 1 + Chunk.TwoBufferX);
+            BakedChunksHeight = ((int)Math.Ceiling((Game1.VirtualHeight / (float)Tile.Size) / Chunk.Size) + 1 + Chunk.TwoBufferY);
             int textureWidth = (BakedChunksWidth * Chunk.TextureSize);
             int textureHeight = (BakedChunksHeight * Chunk.TextureSize);
             Texture = new RenderTarget2D(Program.Game.GraphicsDevice, textureWidth, textureHeight, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
@@ -154,6 +154,13 @@ namespace Tile_Engine
                     j += Chunk.TextureSize;
                 }
             spriteBatch.End();
+#if DEBUG
+            Game1.WorldBakeDrawCount += (Program.Game.GraphicsDevice.Metrics.DrawCount - Game1.WorldBakeDrawCount);
+            Game1.WorldBakeTextureCount += (Program.Game.GraphicsDevice.Metrics.TextureCount - Game1.WorldBakeTextureCount);
+            Game1.WorldBakeSpriteCount += (Program.Game.GraphicsDevice.Metrics.SpriteCount - Game1.WorldBakeSpriteCount);
+            Game1.WorldBakePrimitiveCount += (Program.Game.GraphicsDevice.Metrics.PrimitiveCount - Game1.WorldBakePrimitiveCount);
+            Game1.WorldBakeTargetCount += (Program.Game.GraphicsDevice.Metrics.TargetCount - Game1.WorldBakeTargetCount);
+#endif
         }
 
         public Tile? GetTile(int tileX, int tileY)

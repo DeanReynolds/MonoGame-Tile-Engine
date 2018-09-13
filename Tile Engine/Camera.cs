@@ -81,8 +81,8 @@ namespace Tile_Engine
             RotationZ = Matrix.CreateRotationZ(-angle);
             _zoom = zoom;
             Scale = Matrix.CreateScale(new Vector3(zoom, zoom, 1));
-            _screenTranslation = CreateScreenTranslation(Screen.VirtualWidth, Screen.VirtualHeight);
-            Projection = CreateProjection(Screen.VirtualWidth, Screen.VirtualHeight);
+            _screenTranslation = CreateScreenTranslation(Game1.VirtualWidth, Game1.VirtualHeight);
+            Projection = CreateProjection(Game1.VirtualWidth, Game1.VirtualHeight);
             UpdateTransform();
         }
 
@@ -91,8 +91,8 @@ namespace Tile_Engine
             if (!mouseState.HasValue)
                 mouseState = Mouse.GetState();
             Vector2 mousePos = mouseState.Value.Position.ToVector2();
-            mousePos.X = (((mousePos.X / Screen.WindowWidth) * Screen.VirtualWidth) - Screen.ViewportX);
-            mousePos.Y = (((mousePos.Y / Screen.WindowHeight) * Screen.VirtualHeight) - Screen.ViewportY);
+            mousePos.X = (((mousePos.X / Game1.WindowWidth) * Game1.VirtualWidth) - Game1.ViewportX);
+            mousePos.Y = (((mousePos.Y / Game1.WindowHeight) * Game1.VirtualHeight) - Game1.ViewportY);
             Vector2.Transform(ref mousePos, ref _invert, out mousePos);
             MousePosition = mousePos;
         }

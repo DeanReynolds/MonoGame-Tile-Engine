@@ -4,6 +4,7 @@
     {
         public const int Size = 16;
         public const int BackTextureSize = 34;
+        public const int BackTextureSizeOver2 = (BackTextureSize / 2);
         public const int BackTextureSizeOver4 = (BackTextureSize / 4);
 
         public Fores Fore;

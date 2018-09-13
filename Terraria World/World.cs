@@ -71,8 +71,8 @@ namespace Terraria_World
                     {
                         Tiles = new Tile[Chunk.Size, Chunk.Size]
                     };
-            BakedChunksWidth = ((int)Math.Ceiling((Screen.VirtualWidth / (float)Tile.Size) / Chunk.Size) + 1 + Chunk.TwoBufferX);
-            BakedChunksHeight = ((int)Math.Ceiling((Screen.VirtualHeight / (float)Tile.Size) / Chunk.Size) + 1 + Chunk.TwoBufferY);
+            BakedChunksWidth = ((int)Math.Ceiling((Game1.VirtualWidth / (float)Tile.Size) / Chunk.Size) + 1 + Chunk.TwoBufferX);
+            BakedChunksHeight = ((int)Math.Ceiling((Game1.VirtualHeight / (float)Tile.Size) / Chunk.Size) + 1 + Chunk.TwoBufferY);
             int textureWidth = (BakedChunksWidth * Chunk.ForeTextureSize);
             int textureHeight = (BakedChunksHeight * Chunk.ForeTextureSize);
             ForeTexture = new RenderTarget2D(Program.Game.GraphicsDevice, textureWidth, textureHeight, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
@@ -133,6 +133,10 @@ namespace Terraria_World
                             if ((y >= 0) && (y < ChunksHeight))
                                 if ((Chunks[x, y].ForeTexture != null) || (Chunks[x, y].BackTexture != null))
                                     chunksToUnload.Add(new Point(x, y));
+#if DEBUG
+                Game1.WorldBakeDrawCount = 0;
+                Game1.WorldBakeTextureCount = 0;
+#endif
                 for (int x = RawChunksMinX; x < RawChunksMaxX; x++)
                     if ((x >= 0) && (x < ChunksWidth))
                         for (int y = RawChunksMinY; y < RawChunksMaxY; y++)
@@ -175,6 +179,13 @@ namespace Terraria_World
                     j += Chunk.ForeTextureSize;
                 }
             spriteBatch.End();
+#if DEBUG
+            Game1.WorldBakeDrawCount += (Program.Game.GraphicsDevice.Metrics.DrawCount - Game1.WorldBakeDrawCount);
+            Game1.WorldBakeTextureCount += (Program.Game.GraphicsDevice.Metrics.TextureCount - Game1.WorldBakeTextureCount);
+            Game1.WorldBakeSpriteCount += (Program.Game.GraphicsDevice.Metrics.SpriteCount - Game1.WorldBakeSpriteCount);
+            Game1.WorldBakePrimitiveCount += (Program.Game.GraphicsDevice.Metrics.PrimitiveCount - Game1.WorldBakePrimitiveCount);
+            Game1.WorldBakeTargetCount += (Program.Game.GraphicsDevice.Metrics.TargetCount - Game1.WorldBakeTargetCount);
+#endif
         }
 
         internal void BakeBack()
@@ -196,6 +207,13 @@ namespace Terraria_World
                     j += Chunk.ForeTextureSize;
                 }
             spriteBatch.End();
+#if DEBUG
+            Game1.WorldBakeDrawCount += (Program.Game.GraphicsDevice.Metrics.DrawCount - Game1.WorldBakeDrawCount);
+            Game1.WorldBakeTextureCount += (Program.Game.GraphicsDevice.Metrics.TextureCount - Game1.WorldBakeTextureCount);
+            Game1.WorldBakeSpriteCount += (Program.Game.GraphicsDevice.Metrics.SpriteCount - Game1.WorldBakeSpriteCount);
+            Game1.WorldBakePrimitiveCount += (Program.Game.GraphicsDevice.Metrics.PrimitiveCount - Game1.WorldBakePrimitiveCount);
+            Game1.WorldBakeTargetCount += (Program.Game.GraphicsDevice.Metrics.TargetCount - Game1.WorldBakeTargetCount);
+#endif
         }
 
         public Tile? GetTile(int tileX, int tileY)

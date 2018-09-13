@@ -17,8 +17,8 @@ namespace Terraria_World.Scenes
 
         public override void Update(GameTime gameTime)
         {
-            float virtualWidthOver2 = (Screen.VirtualWidth / 2f);
-            float virtualHeightOver2 = (Screen.VirtualHeight / 2f);
+            float virtualWidthOver2 = (Game1.VirtualWidth / 2f);
+            float virtualHeightOver2 = (Game1.VirtualHeight / 2f);
             if (Program.Game.IsActive)
             {
                 float camSpeed = (float)(500 * gameTime.ElapsedGameTime.TotalSeconds);

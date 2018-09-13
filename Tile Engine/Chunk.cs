@@ -6,7 +6,7 @@ namespace Tile_Engine
 {
     public struct Chunk : IDisposable
     {
-        public const int Bits = 3;
+        public const int Bits = 4;
         public const int BufferX = 0;
         public const int TwoBufferX = (BufferX * 2);
         public const int BufferY = 0;
@@ -45,6 +45,17 @@ namespace Tile_Engine
                     else if (Tiles[x, y].Type == Tile.Types.Tile4)
                         spriteBatch.Draw(Game1.Pixel, new Rectangle((x * Tile.Size), (y * Tile.Size), Tile.Size, Tile.Size), Color.Yellow);
                 }
+#if DEBUG
+            Game1.WorldBakeDrawCount += (Program.Game.GraphicsDevice.Metrics.DrawCount - Game1.WorldBakeDrawCount);
+            Game1.WorldBakeTextureCount += (Program.Game.GraphicsDevice.Metrics.TextureCount - Game1.WorldBakeTextureCount);
+            Game1.WorldBakeSpriteCount += (Program.Game.GraphicsDevice.Metrics.SpriteCount - Game1.WorldBakeSpriteCount);
+            Game1.WorldBakePrimitiveCount += (Program.Game.GraphicsDevice.Metrics.PrimitiveCount - Game1.WorldBakePrimitiveCount);
+            Game1.WorldBakeTargetCount += (Program.Game.GraphicsDevice.Metrics.TargetCount - Game1.WorldBakeTargetCount);
+            spriteBatch.Draw(Game1.Pixel, new Rectangle(0, 0, TextureSize, 1), (Color.Red * .5f));
+            spriteBatch.Draw(Game1.Pixel, new Rectangle((TextureSize - 1), 1, 1, TextureSize), (Color.Red * .5f));
+            spriteBatch.Draw(Game1.Pixel, new Rectangle(0, (TextureSize - 1), TextureSize, 1), (Color.Red * .5f));
+            spriteBatch.Draw(Game1.Pixel, new Rectangle(0, 1, 1, (TextureSize - 2)), (Color.Red * .5f));
+#endif
             spriteBatch.End();
         }
 
