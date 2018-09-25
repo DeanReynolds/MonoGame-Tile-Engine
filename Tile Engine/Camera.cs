@@ -54,8 +54,8 @@ namespace Tile_Engine
         }
 
         public Matrix Transform { get; private set; }
-        public Vector2 MousePosition { get; private set; }
 
+        public Vector2 MousePosition { get { return _mousePosition; } }
         public Matrix Projection { get { return _projection; } }
 
         private Vector2 _position;
@@ -66,6 +66,7 @@ namespace Tile_Engine
         private Matrix _scale;
         private Matrix _screenTranslation;
         private Matrix _transformInvert;
+        private Vector2 _mousePosition;
         private Matrix _projection;
 
         public Camera(float angle = 0, float scale = 1) : this(Vector2.Zero, angle, scale) { }
@@ -75,8 +76,7 @@ namespace Tile_Engine
             _rotationZ = Matrix.CreateRotationZ(-(_angle = angle));
             _scale = Matrix.CreateScale(scale, scale, 1);
             _screenSize = new Vector2(Game1.VirtualWidth, Game1.VirtualHeight);
-            Vector2 screenCenter = new Vector2((_screenSize.X / 2f), (_screenSize.Y / 2f));
-            _screenTranslation = Matrix.CreateTranslation(screenCenter.X, screenCenter.Y, 0);
+            _screenTranslation = Matrix.CreateTranslation((_screenSize.X / 2f), (_screenSize.Y / 2f), 0);
             UpdateTransform();
             _projection = Matrix.CreateOrthographicOffCenter(0, _screenSize.X, _screenSize.Y, 0, 0, 1);
         }
@@ -85,11 +85,10 @@ namespace Tile_Engine
         {
             if (!mouseState.HasValue)
                 mouseState = Mouse.GetState();
-            Vector2 mousePos = mouseState.Value.Position.ToVector2();
-            mousePos.X = (((mousePos.X / Game1.WindowWidth) * Game1.VirtualWidth) - Game1.ViewportX);
-            mousePos.Y = (((mousePos.Y / Game1.WindowHeight) * Game1.VirtualHeight) - Game1.ViewportY);
-            Vector2.Transform(ref mousePos, ref _transformInvert, out mousePos);
-            MousePosition = mousePos;
+            float mouseX = ((((float)mouseState.Value.Position.X / Game1.WindowWidth) * Game1.VirtualWidth) - Game1.ViewportX);
+            float mouseY = ((((float)mouseState.Value.Position.Y / Game1.WindowHeight) * Game1.VirtualHeight) - Game1.ViewportY);
+            _mousePosition.X = ((mouseX * _transformInvert.M11) + (mouseY * _transformInvert.M21) + _transformInvert.M41);
+            _mousePosition.Y = ((mouseX * _transformInvert.M12) + (mouseY * _transformInvert.M22) + _transformInvert.M42);
         }
 
         public void UpdateTransform()
