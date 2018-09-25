@@ -76,8 +76,7 @@ namespace Tile_Engine
         public Camera(Vector2 position, float angle = 0, float scale = 1)
         {
             _positionTranslation = Matrix.CreateTranslation(-(_position.X = position.X), -(_position.Y = position.Y), 0);
-            _angle = angle;
-            _rotationZ = Matrix.CreateRotationZ(-angle);
+            _rotationZ = Matrix.CreateRotationZ(-(_angle = angle));
             _scale = Matrix.CreateScale(scale, scale, 1);
             _screenCenter = new Vector2((Game1.VirtualWidth / 2f), (Game1.VirtualHeight / 2f));
             _screenTranslation = Matrix.CreateTranslation(_screenCenter.X, _screenCenter.Y, 0);
