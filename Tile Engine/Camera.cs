@@ -27,7 +27,7 @@ namespace Tile_Engine
         public float Angle
         {
             get { return _angle; }
-            set { RotationZ = Matrix.CreateRotationZ(-(_angle = value)); }
+            set { _rotationZ = Matrix.CreateRotationZ(-(_angle = value)); }
         }
         public float Scale
         {
@@ -56,7 +56,6 @@ namespace Tile_Engine
             }
         }
 
-        public Matrix RotationZ { get; private set; }
         public Matrix Transform { get; private set; }
         public Vector2 MousePosition { get; private set; }
 
@@ -67,6 +66,7 @@ namespace Tile_Engine
         private Vector2 _screenSize;
         private Vector2 _screenCenter;
         private Matrix _positionTranslation;
+        private Matrix _rotationZ;
         private Matrix _scale;
         private Matrix _screenTranslation;
         private Matrix _transformInvert;
@@ -77,7 +77,7 @@ namespace Tile_Engine
         {
             _positionTranslation = Matrix.CreateTranslation(-(_position.X = position.X), -(_position.Y = position.Y), 0);
             _angle = angle;
-            RotationZ = Matrix.CreateRotationZ(-angle);
+            _rotationZ = Matrix.CreateRotationZ(-angle);
             _scale = Matrix.CreateScale(scale, scale, 1);
             _screenCenter = new Vector2((Game1.VirtualWidth / 2f), (Game1.VirtualHeight / 2f));
             _screenTranslation = Matrix.CreateTranslation(_screenCenter.X, _screenCenter.Y, 0);
@@ -99,7 +99,7 @@ namespace Tile_Engine
 
         public void UpdateTransform()
         {
-            Transform = (_positionTranslation * RotationZ * _scale * _screenTranslation);
+            Transform = (_positionTranslation * _rotationZ * _scale * _screenTranslation);
             _transformInvert = Matrix.Invert(Transform);
         }
     }
