@@ -22,16 +22,31 @@ namespace Tile_Engine.Scenes
             if (Program.Game.IsActive)
             {
                 float camSpeed = (float)(500 * gameTime.ElapsedGameTime.TotalSeconds);
+                bool cameraNeedsUpdate = false;
                 if (Keyboard.GetState().IsKeyDown(Keys.W))
+                {
                     _camera.Y -= camSpeed;
+                    cameraNeedsUpdate = true;
+                }
                 if (Keyboard.GetState().IsKeyDown(Keys.S))
+                {
                     _camera.Y += camSpeed;
+                    cameraNeedsUpdate = true;
+                }
                 if (Keyboard.GetState().IsKeyDown(Keys.A))
+                {
                     _camera.X -= camSpeed;
+                    cameraNeedsUpdate = true;
+                }
                 if (Keyboard.GetState().IsKeyDown(Keys.D))
+                {
                     _camera.X += camSpeed;
+                    cameraNeedsUpdate = true;
+                }
                 //_camera.X = MathHelper.Clamp(_camera.X, virtualWidthOver2, ((_world.TilesWidth * Tile.Size) - virtualWidthOver2));
                 //_camera.Y = MathHelper.Clamp(_camera.X, virtualHeightOver2, ((_world.TilesWidth * Tile.Size) - virtualHeightOver2));
+                if (cameraNeedsUpdate)
+                    _camera.UpdateTransform();
                 MouseState mouseState = Mouse.GetState();
                 _camera.UpdateMousePosition(mouseState);
                 int mouseTileX = -1;

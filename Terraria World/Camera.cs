@@ -8,20 +8,12 @@ namespace Terraria_World
         public float X
         {
             get { return _position.X; }
-            set
-            {
-                _positionTranslation.M41 = -(_position.X = value);
-                UpdateTransform();
-            }
+            set { _positionTranslation.M41 = -(_position.X = value); }
         }
         public float Y
         {
             get { return _position.Y; }
-            set
-            {
-                _positionTranslation.M42 = -(_position.Y = value);
-                UpdateTransform();
-            }
+            set { _positionTranslation.M42 = -(_position.Y = value); }
         }
         public Vector2 Position
         {
@@ -30,27 +22,17 @@ namespace Terraria_World
             {
                 _positionTranslation.M41 = -(_position.X = value.X);
                 _positionTranslation.M42 = -(_position.Y = value.Y);
-                UpdateTransform();
             }
         }
         public float Angle
         {
             get { return _angle; }
-            set
-            {
-                _angle = value;
-                RotationZ = Matrix.CreateRotationZ(-_angle);
-                UpdateTransform();
-            }
+            set { _rotationZ = Matrix.CreateRotationZ(-(_angle = value)); }
         }
         public float Scale
         {
             get { return _scale.M11; }
-            set
-            {
-                _scale.M11 = _scale.M22 = value;
-                UpdateTransform();
-            }
+            set { _scale.M11 = _scale.M22 = value; }
         }
         public Vector2 ScreenSize
         {
@@ -71,11 +53,9 @@ namespace Terraria_World
             {
                 _screenTranslation.M41 = _screenCenter.X = value.X;
                 _screenTranslation.M42 = _screenCenter.Y = value.Y;
-                UpdateTransform();
             }
         }
 
-        public Matrix RotationZ { get; private set; }
         public Matrix Transform { get; private set; }
         public Vector2 MousePosition { get; private set; }
 
@@ -86,6 +66,7 @@ namespace Terraria_World
         private Vector2 _screenSize;
         private Vector2 _screenCenter;
         private Matrix _positionTranslation;
+        private Matrix _rotationZ;
         private Matrix _scale;
         private Matrix _screenTranslation;
         private Matrix _transformInvert;
@@ -96,7 +77,7 @@ namespace Terraria_World
         {
             _positionTranslation = Matrix.CreateTranslation(-(_position.X = position.X), -(_position.Y = position.Y), 0);
             _angle = angle;
-            RotationZ = Matrix.CreateRotationZ(-angle);
+            _rotationZ = Matrix.CreateRotationZ(-angle);
             _scale = Matrix.CreateScale(scale, scale, 1);
             _screenCenter = new Vector2((Game1.VirtualWidth / 2f), (Game1.VirtualHeight / 2f));
             _screenTranslation = Matrix.CreateTranslation(_screenCenter.X, _screenCenter.Y, 0);
@@ -118,7 +99,7 @@ namespace Terraria_World
 
         public void UpdateTransform()
         {
-            Transform = (_positionTranslation * RotationZ * _scale * _screenTranslation);
+            Transform = (_positionTranslation * _rotationZ * _scale * _screenTranslation);
             _transformInvert = Matrix.Invert(Transform);
         }
     }

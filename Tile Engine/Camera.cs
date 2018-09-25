@@ -8,20 +8,12 @@ namespace Tile_Engine
         public float X
         {
             get { return _position.X; }
-            set
-            {
-                _positionTranslation.M41 = -(_position.X = value);
-                UpdateTransform();
-            }
+            set { _positionTranslation.M41 = -(_position.X = value); }
         }
         public float Y
         {
             get { return _position.Y; }
-            set
-            {
-                _positionTranslation.M42 = -(_position.Y = value);
-                UpdateTransform();
-            }
+            set { _positionTranslation.M42 = -(_position.Y = value); }
         }
         public Vector2 Position
         {
@@ -30,27 +22,17 @@ namespace Tile_Engine
             {
                 _positionTranslation.M41 = -(_position.X = value.X);
                 _positionTranslation.M42 = -(_position.Y = value.Y);
-                UpdateTransform();
             }
         }
         public float Angle
         {
             get { return _angle; }
-            set
-            {
-                _angle = value;
-                RotationZ = Matrix.CreateRotationZ(-_angle);
-                UpdateTransform();
-            }
+            set { RotationZ = Matrix.CreateRotationZ(-(_angle = value)); }
         }
         public float Scale
         {
             get { return _scale.M11; }
-            set
-            {
-                _scale.M11 = _scale.M22 = value;
-                UpdateTransform();
-            }
+            set { _scale.M11 = _scale.M22 = value; }
         }
         public Vector2 ScreenSize
         {
@@ -71,7 +53,6 @@ namespace Tile_Engine
             {
                 _screenTranslation.M41 = _screenCenter.X = value.X;
                 _screenTranslation.M42 = _screenCenter.Y = value.Y;
-                UpdateTransform();
             }
         }
 
