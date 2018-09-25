@@ -27,7 +27,11 @@ namespace Terraria_World
         public float Angle
         {
             get { return _angle; }
-            set { _rotationZ = Matrix.CreateRotationZ(-(_angle = value)); }
+            set
+            {
+                _rotationZ.M22 = _rotationZ.M11 = (float)System.Math.Cos(_angle = value);
+                _rotationZ.M21 = -(_rotationZ.M12 = (float)System.Math.Sin(_angle));
+            }
         }
         public float Scale
         {
@@ -40,19 +44,12 @@ namespace Terraria_World
             set
             {
                 _screenSize = value;
-                _projection.M11 = (float)(2d / (_screenSize.X - 0d));
-                _projection.M22 = (float)(2d / (0d - _screenSize.Y));
-                _projection.M41 = (float)((0d + _screenSize.X) / (0d - _screenSize.X));
-                _projection.M42 = (float)((0d + _screenSize.Y) / (_screenSize.Y - 0d));
-            }
-        }
-        public Vector2 ScreenCenter
-        {
-            get { return _screenCenter; }
-            set
-            {
-                _screenTranslation.M41 = _screenCenter.X = value.X;
-                _screenTranslation.M42 = _screenCenter.Y = value.Y;
+                _projection.M11 = (float)(2d / _screenSize.X);
+                _projection.M22 = (float)(2d / -_screenSize.Y);
+                _projection.M41 = (float)((double)_screenSize.X / -_screenSize.X);
+                _projection.M42 = (float)((double)_screenSize.Y / _screenSize.Y);
+                _screenTranslation.M41 = (_screenSize.X / 2f);
+                _screenTranslation.M42 = (_screenSize.Y / 2f);
             }
         }
 
@@ -64,7 +61,6 @@ namespace Terraria_World
         private Vector2 _position;
         private float _angle;
         private Vector2 _screenSize;
-        private Vector2 _screenCenter;
         private Matrix _positionTranslation;
         private Matrix _rotationZ;
         private Matrix _scale;
@@ -78,10 +74,10 @@ namespace Terraria_World
             _positionTranslation = Matrix.CreateTranslation(-(_position.X = position.X), -(_position.Y = position.Y), 0);
             _rotationZ = Matrix.CreateRotationZ(-(_angle = angle));
             _scale = Matrix.CreateScale(scale, scale, 1);
-            _screenCenter = new Vector2((Game1.VirtualWidth / 2f), (Game1.VirtualHeight / 2f));
-            _screenTranslation = Matrix.CreateTranslation(_screenCenter.X, _screenCenter.Y, 0);
-            UpdateTransform();
             _screenSize = new Vector2(Game1.VirtualWidth, Game1.VirtualHeight);
+            Vector2 screenCenter = new Vector2((_screenSize.X / 2f), (_screenSize.Y / 2f));
+            _screenTranslation = Matrix.CreateTranslation(screenCenter.X, screenCenter.Y, 0);
+            UpdateTransform();
             _projection = Matrix.CreateOrthographicOffCenter(0, _screenSize.X, _screenSize.Y, 0, 0, 1);
         }
 
