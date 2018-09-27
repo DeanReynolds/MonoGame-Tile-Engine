@@ -45,8 +45,6 @@ namespace Terraria_World.Scenes
                 }
                 //_camera.X = MathHelper.Clamp(_camera.X, virtualWidthOver2, ((_world.TilesWidth * Tile.Size) - virtualWidthOver2));
                 //_camera.Y = MathHelper.Clamp(_camera.X, virtualHeightOver2, ((_world.TilesWidth * Tile.Size) - virtualHeightOver2));
-                if (cameraNeedsUpdate)
-                    _camera.UpdateTransform();
                 MouseState mouseState = Mouse.GetState();
                 _camera.UpdateMousePosition(mouseState);
                 int mouseTileX = -1;
