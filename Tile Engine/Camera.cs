@@ -12,7 +12,6 @@ namespace Tile_Engine
             {
                 _positionTranslation.M41 = -(_position.X = value);
                 UpdatePositionInTransform();
-                _transformInvert = Matrix.Invert(_transform);
             }
         }
         public float Y
@@ -22,7 +21,6 @@ namespace Tile_Engine
             {
                 _positionTranslation.M42 = -(_position.Y = value);
                 UpdatePositionInTransform();
-                _transformInvert = Matrix.Invert(_transform);
             }
         }
         public Vector2 Position
@@ -33,7 +31,6 @@ namespace Tile_Engine
                 _positionTranslation.M41 = -(_position.X = value.X);
                 _positionTranslation.M42 = -(_position.Y = value.Y);
                 UpdatePositionInTransform();
-                _transformInvert = Matrix.Invert(_transform);
             }
         }
         public float Angle
@@ -45,7 +42,6 @@ namespace Tile_Engine
                 _rotationZ.M21 = -(_rotationZ.M12 = (float)System.Math.Sin(_angle));
                 UpdatePositionInTransform();
                 UpdateScaleInTransform();
-                _transformInvert = Matrix.Invert(_transform);
             }
         }
         public float Scale
@@ -56,7 +52,6 @@ namespace Tile_Engine
                 _scale.M11 = _scale.M22 = value;
                 UpdatePositionInTransform();
                 UpdateScaleInTransform();
-                _transformInvert = Matrix.Invert(_transform);
             }
         }
         public Vector2 ScreenSize
@@ -72,7 +67,6 @@ namespace Tile_Engine
                 _screenTranslation.M41 = (_screenSize.X / 2f);
                 _screenTranslation.M42 = (_screenSize.Y / 2f);
                 UpdatePositionInTransform();
-                _transformInvert = Matrix.Invert(_transform);
             }
         }
 
@@ -86,6 +80,7 @@ namespace Tile_Engine
         private Matrix _positionTranslation;
         private Matrix _rotationZ;
         private Matrix _scale;
+        private float _n27;
         private Matrix _screenTranslation;
         private Matrix _transform;
         private Matrix _transformInvert;
@@ -101,6 +96,7 @@ namespace Tile_Engine
             _screenSize = new Vector2(Game1.VirtualWidth, Game1.VirtualHeight);
             _screenTranslation = Matrix.CreateTranslation((_screenSize.X / 2f), (_screenSize.Y / 2f), 0);
             _transform = (_positionTranslation * _rotationZ * _scale * _screenTranslation);
+            _n27 = (float)(1d / ((double)_transform.M11 * _transform.M22 + (double)_transform.M12 * -_transform.M21));
             _transformInvert = Matrix.Invert(_transform);
             _projection = Matrix.CreateOrthographicOffCenter(0, _screenSize.X, _screenSize.Y, 0, 0, 1);
         }
@@ -121,6 +117,9 @@ namespace Tile_Engine
             float m42 = (_positionTranslation.M42 * _scale.M22);
             _transform.M41 = (((m41 * _rotationZ.M11) + (m42 * _rotationZ.M21)) + _screenTranslation.M41);
             _transform.M42 = (((m41 * _rotationZ.M12) + (m42 * _rotationZ.M22)) + _screenTranslation.M42);
+            float n26 = (float)-((double)_transform.M21 * -_transform.M42 - (double)_transform.M22 * -_transform.M41);
+            _transformInvert.M41 = (n26 * _n27);
+            _transformInvert.M42 = (float)(((double)_transform.M11 * -_transform.M42 - (double)_transform.M12 * -_transform.M41) * _n27);
         }
 
         public void UpdateScaleInTransform()
@@ -129,6 +128,11 @@ namespace Tile_Engine
             _transform.M12 = ((_scale.M11 * _rotationZ.M12) + (_scale.M12 * _rotationZ.M22));
             _transform.M21 = ((_scale.M21 * _rotationZ.M11) + (_scale.M22 * _rotationZ.M21));
             _transform.M22 = ((_scale.M21 * _rotationZ.M12) + (_scale.M22 * _rotationZ.M22));
+            _n27 = (float)(1d / ((double)_transform.M11 * _transform.M22 + (double)_transform.M12 * -_transform.M21));
+            _transformInvert.M11 = (_transform.M22 * _n27);
+            _transformInvert.M21 = (-_transform.M21 * _n27);
+            _transformInvert.M12 = (float)-((double)_transform.M12 * _n27);
+            _transformInvert.M22 = (float)((double)_transform.M11 * _n27);
         }
     }
 }
