@@ -117,8 +117,7 @@ namespace Tile_Engine
             float m42 = (_positionTranslation.M42 * _scale.M22);
             _transform.M41 = (((m41 * _rotationZ.M11) + (m42 * _rotationZ.M21)) + _screenTranslation.M41);
             _transform.M42 = (((m41 * _rotationZ.M12) + (m42 * _rotationZ.M22)) + _screenTranslation.M42);
-            float n26 = (float)-((double)_transform.M21 * -_transform.M42 - (double)_transform.M22 * -_transform.M41);
-            _transformInvert.M41 = (n26 * _n27);
+            _transformInvert.M41 = (float)(-((double)_transform.M21 * -_transform.M42 - (double)_transform.M22 * -_transform.M41) * _n27);
             _transformInvert.M42 = (float)(((double)_transform.M11 * -_transform.M42 - (double)_transform.M12 * -_transform.M41) * _n27);
         }
 
