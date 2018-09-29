@@ -163,7 +163,7 @@ namespace Terraria_World
                 Height = height2
             };
             Camera.MouseOffset.X = ((Viewport.Width - VirtualWidth) / 2f);
-            Camera.MouseOffset.X = ((Viewport.Height - VirtualHeight) / 2f);
+            Camera.MouseOffset.Y = ((Viewport.Height - VirtualHeight) / 2f);
             VirtualScale = MathHelper.Min((graphicsDeviceManager.PreferredBackBufferWidth / (float)width), (graphicsDeviceManager.PreferredBackBufferHeight / (float)height));
         }
     }
