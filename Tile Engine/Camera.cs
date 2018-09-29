@@ -80,7 +80,7 @@ namespace Tile_Engine
         private Matrix _positionTranslation;
         private Matrix _rotationZ;
         private Matrix _scale;
-        private float _n27;
+        private double _n27;
         private Matrix _screenTranslation;
         private Matrix _transform;
         private Matrix _transformInvert;
@@ -127,11 +127,11 @@ namespace Tile_Engine
             _transform.M12 = ((_scale.M11 * _rotationZ.M12) + (_scale.M12 * _rotationZ.M22));
             _transform.M21 = ((_scale.M21 * _rotationZ.M11) + (_scale.M22 * _rotationZ.M21));
             _transform.M22 = ((_scale.M21 * _rotationZ.M12) + (_scale.M22 * _rotationZ.M22));
-            _n27 = (float)(1d / ((double)_transform.M11 * _transform.M22 + (double)_transform.M12 * -_transform.M21));
-            _transformInvert.M11 = (float)((double)_transform.M22 * _n27);
-            _transformInvert.M21 = (float)((double)-_transform.M21 * _n27);
-            _transformInvert.M12 = (float)-((double)_transform.M12 * _n27);
-            _transformInvert.M22 = (float)((double)_transform.M11 * _n27);
+            _n27 = (1d / ((double)_transform.M11 * _transform.M22 + (double)_transform.M12 * -_transform.M21));
+            _transformInvert.M11 = (float)(_transform.M22 * _n27);
+            _transformInvert.M21 = (float)(-_transform.M21 * _n27);
+            _transformInvert.M12 = (float)-(_transform.M12 * _n27);
+            _transformInvert.M22 = (float)(_transform.M11 * _n27);
         }
     }
 }
