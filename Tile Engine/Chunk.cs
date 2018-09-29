@@ -51,10 +51,11 @@ namespace Tile_Engine
             Game1.WorldBakeSpriteCount += (Program.Game.GraphicsDevice.Metrics.SpriteCount - Game1.WorldBakeSpriteCount);
             Game1.WorldBakePrimitiveCount += (Program.Game.GraphicsDevice.Metrics.PrimitiveCount - Game1.WorldBakePrimitiveCount);
             Game1.WorldBakeTargetCount += (Program.Game.GraphicsDevice.Metrics.TargetCount - Game1.WorldBakeTargetCount);
-            spriteBatch.Draw(Game1.Pixel, new Rectangle(0, 0, TextureSize, 1), (Color.Red * .5f));
-            spriteBatch.Draw(Game1.Pixel, new Rectangle((TextureSize - 1), 1, 1, TextureSize), (Color.Red * .5f));
-            spriteBatch.Draw(Game1.Pixel, new Rectangle(0, (TextureSize - 1), TextureSize, 1), (Color.Red * .5f));
-            spriteBatch.Draw(Game1.Pixel, new Rectangle(0, 1, 1, (TextureSize - 2)), (Color.Red * .5f));
+            Color color = (Color.Red * .5f);
+            spriteBatch.Draw(Game1.Pixel, new Rectangle(0, 0, TextureSize, 1), null, color, 0, Vector2.Zero, SpriteEffects.None, 0);
+            spriteBatch.Draw(Game1.Pixel, new Rectangle((TextureSize - 1), 1, 1, (TextureSize - 1)), null, color, 0, Vector2.Zero, SpriteEffects.None, 0);
+            spriteBatch.Draw(Game1.Pixel, new Rectangle(0, (TextureSize - 1), (TextureSize - 1), 1), null, color, 0, Vector2.Zero, SpriteEffects.None, 0);
+            spriteBatch.Draw(Game1.Pixel, new Rectangle(0, 1, 1, (TextureSize - 2)), null, color, 0, Vector2.Zero, SpriteEffects.None, 0);
 #endif
             spriteBatch.End();
         }

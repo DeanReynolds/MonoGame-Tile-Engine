@@ -16,8 +16,10 @@ namespace Terraria_World
         public static readonly int Modulo = (Size - 1);
         public static readonly int ForeTextureSize = (Tile.Size * Size);
         public static readonly int BackTextureSize = (ForeTextureSize + Tile.BackTextureSizeOver2);
-        public static readonly int BufferXTextureSize = (BufferX * ForeTextureSize);
-        public static readonly int BufferYTextureSize = (BufferY * ForeTextureSize);
+        public static readonly int BufferXForeTextureSize = (BufferX * ForeTextureSize);
+        public static readonly int BufferYForeTextureSize = (BufferY * ForeTextureSize);
+        public static readonly int BufferXBackTextureSize = (BufferX * BackTextureSize);
+        public static readonly int BufferYBackTextureSize = (BufferY * BackTextureSize);
 
         public Tile[,] Tiles { get; internal set; }
 
@@ -48,10 +50,11 @@ namespace Terraria_World
             Game1.WorldBakeSpriteCount += (Program.Game.GraphicsDevice.Metrics.SpriteCount - Game1.WorldBakeSpriteCount);
             Game1.WorldBakePrimitiveCount += (Program.Game.GraphicsDevice.Metrics.PrimitiveCount - Game1.WorldBakePrimitiveCount);
             Game1.WorldBakeTargetCount += (Program.Game.GraphicsDevice.Metrics.TargetCount - Game1.WorldBakeTargetCount);
-            spriteBatch.Draw(Game1.Pixel, new Rectangle(0, 0, ForeTextureSize, 1), (Color.Red * .5f));
-            spriteBatch.Draw(Game1.Pixel, new Rectangle((ForeTextureSize - 1), 1, 1, ForeTextureSize), (Color.Red * .5f));
-            spriteBatch.Draw(Game1.Pixel, new Rectangle(0, (ForeTextureSize - 1), ForeTextureSize, 1), (Color.Red * .5f));
-            spriteBatch.Draw(Game1.Pixel, new Rectangle(0, 1, 1, (ForeTextureSize - 2)), (Color.Red * .5f));
+            Color color = (Color.Red * .5f);
+            spriteBatch.Draw(Game1.Pixel, new Rectangle(0, 0, ForeTextureSize, 1), null, color, 0, Vector2.Zero, SpriteEffects.None, 0);
+            spriteBatch.Draw(Game1.Pixel, new Rectangle((ForeTextureSize - 1), 1, 1, (ForeTextureSize - 1)), null, color, 0, Vector2.Zero, SpriteEffects.None, 0);
+            spriteBatch.Draw(Game1.Pixel, new Rectangle(0, (ForeTextureSize - 1), (ForeTextureSize - 1), 1), null, color, 0, Vector2.Zero, SpriteEffects.None, 0);
+            spriteBatch.Draw(Game1.Pixel, new Rectangle(0, 1, 1, (ForeTextureSize - 2)), null, color, 0, Vector2.Zero, SpriteEffects.None, 0);
 #endif
             spriteBatch.End();
         }
@@ -85,10 +88,11 @@ namespace Terraria_World
             Game1.WorldBakeSpriteCount += (Program.Game.GraphicsDevice.Metrics.SpriteCount - Game1.WorldBakeSpriteCount);
             Game1.WorldBakePrimitiveCount += (Program.Game.GraphicsDevice.Metrics.PrimitiveCount - Game1.WorldBakePrimitiveCount);
             Game1.WorldBakeTargetCount += (Program.Game.GraphicsDevice.Metrics.TargetCount - Game1.WorldBakeTargetCount);
-            spriteBatch.Draw(Game1.Pixel, new Rectangle(0, 0, BackTextureSize, 1), (Color.Blue * .5f));
-            spriteBatch.Draw(Game1.Pixel, new Rectangle((BackTextureSize - 1), 1, 1, BackTextureSize), (Color.Blue * .5f));
-            spriteBatch.Draw(Game1.Pixel, new Rectangle(0, (BackTextureSize - 1), BackTextureSize, 1), (Color.Blue * .5f));
-            spriteBatch.Draw(Game1.Pixel, new Rectangle(0, 1, 1, (BackTextureSize - 2)), (Color.Blue * .5f));
+            Color color = (Color.Blue * .5f);
+            spriteBatch.Draw(Game1.Pixel, new Rectangle(0, 0, BackTextureSize, 1), null, color, 0, Vector2.Zero, SpriteEffects.None, 0);
+            spriteBatch.Draw(Game1.Pixel, new Rectangle((BackTextureSize - 1), 1, 1, (BackTextureSize - 1)), null, color, 0, Vector2.Zero, SpriteEffects.None, 0);
+            spriteBatch.Draw(Game1.Pixel, new Rectangle(0, (BackTextureSize - 1), (BackTextureSize - 1), 1), null, color, 0, Vector2.Zero, SpriteEffects.None, 0);
+            spriteBatch.Draw(Game1.Pixel, new Rectangle(0, 1, 1, (BackTextureSize - 2)), null, color, 0, Vector2.Zero, SpriteEffects.None, 0);
 #endif
             spriteBatch.End();
         }

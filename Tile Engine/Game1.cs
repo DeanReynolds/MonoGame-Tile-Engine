@@ -11,9 +11,6 @@ namespace Tile_Engine
         public const long ActiveFrameRate = (TimeSpan.TicksPerSecond / 60);
         public const long InactiveFrameRate = (TimeSpan.TicksPerSecond / 30);
 
-        public static int VirtualWidth;
-        public static int VirtualHeight;
-
 #if DEBUG
         public static long WorldBakeDrawCount;
         public static long WorldBakeTextureCount;
@@ -22,12 +19,13 @@ namespace Tile_Engine
         public static long WorldBakeTargetCount;
 #endif
 
+        public static int VirtualWidth { get; private set; }
+        public static int VirtualHeight { get; private set; }
+        public static float VirtualScale { get; private set; }
+        public static Viewport Viewport { get; private set; }
         public static Texture2D Pixel { get; private set; }
+        public static Vector2 PixelOrigin { get; private set; }
 
-        public static int ViewportX { get { return Program.Game.GraphicsDevice.Viewport.X; } }
-        public static int ViewportY { get { return Program.Game.GraphicsDevice.Viewport.Y; } }
-        public static int ViewportWidth { get { return Program.Game.GraphicsDevice.Viewport.Width; } }
-        public static int ViewportHeight { get { return Program.Game.GraphicsDevice.Viewport.Height; } }
         public static int WindowWidth { get { return Program.Game.Window.ClientBounds.Width; } }
         public static int WindowHeight { get { return Program.Game.Window.ClientBounds.Height; } }
         public static int PreferredBackBufferWidth { get { return Program.Game.Services.GetService<GraphicsDeviceManager>().PreferredBackBufferWidth; } }
@@ -36,7 +34,6 @@ namespace Tile_Engine
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private Scene _scene;
-        private RenderTarget2D _output;
         private SpriteFont _font;
 
         public Game1()
@@ -62,19 +59,14 @@ namespace Tile_Engine
                 OnDeactivated(this, EventArgs.Empty);
             IsMouseVisible = true;
             //IsFixedTimeStep = false;
-            _graphics.PreferredBackBufferHeight = 1920;
-            _graphics.PreferredBackBufferWidth = 1080;
+            _graphics.PreferredBackBufferWidth = 1920;
+            _graphics.PreferredBackBufferHeight = 1080;
             _graphics.HardwareModeSwitch = false;
             _graphics.IsFullScreen = true;
             _graphics.ApplyChanges();
-            VirtualWidth = 1920;
-            VirtualHeight = 1080;
+            SetVirtualResolution(1920, 1080);
+            PixelOrigin = new Vector2(.5f);
             _scene = new Scenes.Game(256);
-            _output = new RenderTarget2D(GraphicsDevice, VirtualWidth, VirtualHeight, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
-            for (int i = 0; i < 33; i++)
-            {
-                Console.WriteLine(string.Format("{0} << {1} = {2}", i, Chunk.Bits, (i << 1)));
-            }
         }
 
         protected override void LoadContent()
@@ -102,27 +94,23 @@ namespace Tile_Engine
         protected override void Draw(GameTime gameTime)
         {
             Profiler.Start("Game Draw");
-            GraphicsDevice.SetRenderTarget(_output);
+            GraphicsDevice.SetRenderTarget(null);
+            GraphicsDevice.Viewport = Viewport;
             GraphicsDevice.Clear(Color.CornflowerBlue);
             _scene?.Draw(_spriteBatch, gameTime);
-            GraphicsDevice.SetRenderTarget(null);
-            GraphicsDevice.Clear(Color.Black);
-            _spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, null, null);
-            _spriteBatch.Draw(_output, new Rectangle(0, 0, ViewportWidth, ViewportHeight), Color.White);
-            _spriteBatch.End();
             Profiler.Stop("Game Draw");
             _spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, null);
             string text = string.Format("FPS: {0}", Math.Floor(1 / gameTime.ElapsedGameTime.TotalSeconds));
             Vector2 textSize = _font.MeasureString(text);
-            _spriteBatch.DrawString(_font, text, new Vector2((ViewportWidth - textSize.X - 3), 5), Color.Black, 0, Vector2.Zero, 1, SpriteEffects.None, 1);
-            _spriteBatch.DrawString(_font, text, new Vector2((ViewportWidth - textSize.X - 4), 4), Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+            _spriteBatch.DrawString(_font, text, new Vector2((Viewport.Width - textSize.X - 3), 5), Color.Black, 0, Vector2.Zero, 1, SpriteEffects.None, 1);
+            _spriteBatch.DrawString(_font, text, new Vector2((Viewport.Height - textSize.X - 4), 4), Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
 #if DEBUG
             text = string.Format("Game\n  Draw Count: {0}\n  Texture Count: {1}\n  Sprite Count: {2}\n  Primitive Count: {3}\n  Target Count: {4}\n\nWorld Bake\n  Draw Count: {5}\n  Texture Count: {6}\n  Sprite Count: {7}\n  Primitive Count: {8}\n  Target Count: {9}", GraphicsDevice.Metrics.DrawCount, GraphicsDevice.Metrics.TextureCount, GraphicsDevice.Metrics.SpriteCount, GraphicsDevice.Metrics.PrimitiveCount, GraphicsDevice.Metrics.TargetCount, WorldBakeDrawCount, WorldBakeTextureCount, WorldBakeSpriteCount, WorldBakePrimitiveCount, WorldBakeTargetCount);
             _spriteBatch.DrawString(_font, text, new Vector2(5, 5), Color.Black, 0, Vector2.Zero, 1, SpriteEffects.None, 1);
             _spriteBatch.DrawString(_font, text, new Vector2(4, 4), Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
 #endif
             _spriteBatch.End();
-            Profiler.Draw(_spriteBatch, _font, ViewportWidth, ViewportHeight);
+            Profiler.Draw(_spriteBatch, _font, Viewport.Width, Viewport.Height);
             base.Draw(gameTime);
         }
 
@@ -136,6 +124,31 @@ namespace Tile_Engine
         {
             TargetElapsedTime = new TimeSpan(InactiveFrameRate);
             base.OnDeactivated(sender, args);
+        }
+
+        public static void SetVirtualResolution(int width, int height)
+        {
+            VirtualWidth = width;
+            VirtualHeight = height;
+            GraphicsDeviceManager graphicsDeviceManager = Program.Game.Services.GetService<GraphicsDeviceManager>();
+            var targetAspectRatio = (width / (float)height);
+            var width2 = graphicsDeviceManager.PreferredBackBufferWidth;
+            var height2 = (int)(width2 / targetAspectRatio + .5f);
+            if (height2 > graphicsDeviceManager.PreferredBackBufferHeight)
+            {
+                height2 = graphicsDeviceManager.PreferredBackBufferHeight;
+                width2 = (int)(height2 * targetAspectRatio + .5f);
+            }
+            Viewport = new Viewport()
+            {
+                X = ((graphicsDeviceManager.PreferredBackBufferWidth / 2) - (width2 / 2)),
+                Y = ((graphicsDeviceManager.PreferredBackBufferHeight / 2) - (height2 / 2)),
+                Width = width2,
+                Height = height2
+            };
+            Camera.MouseOffset.X = ((Viewport.Width - VirtualWidth) / 2f);
+            Camera.MouseOffset.X = ((Viewport.Height - VirtualHeight) / 2f);
+            VirtualScale = MathHelper.Min((graphicsDeviceManager.PreferredBackBufferWidth / (float)width), (graphicsDeviceManager.PreferredBackBufferHeight / (float)height));
         }
     }
 }

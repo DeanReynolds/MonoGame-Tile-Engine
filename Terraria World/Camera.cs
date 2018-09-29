@@ -5,6 +5,8 @@ namespace Terraria_World
 {
     public class Camera
     {
+        public static Vector2 MouseOffset;
+
         public float X
         {
             get { return _position.X; }
@@ -105,8 +107,8 @@ namespace Terraria_World
         {
             if (!mouseState.HasValue)
                 mouseState = Mouse.GetState();
-            float mouseX = ((((float)mouseState.Value.Position.X / Game1.WindowWidth) * Game1.VirtualWidth) - Game1.ViewportX);
-            float mouseY = ((((float)mouseState.Value.Position.Y / Game1.WindowHeight) * Game1.VirtualHeight) - Game1.ViewportY);
+            float mouseX = (mouseState.Value.Position.X - MouseOffset.X);
+            float mouseY = (mouseState.Value.Position.Y - MouseOffset.Y);
             _mousePosition.X = ((mouseX * _transformInvert.M11) + (mouseY * _transformInvert.M21) + _transformInvert.M41);
             _mousePosition.Y = ((mouseX * _transformInvert.M12) + (mouseY * _transformInvert.M22) + _transformInvert.M42);
         }

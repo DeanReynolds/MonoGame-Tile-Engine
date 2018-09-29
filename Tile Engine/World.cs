@@ -39,9 +39,9 @@ namespace Tile_Engine
         public int OldRawChunksMaxY { get; private set; }
         public float CameraX { get; private set; }
         public float CameraY { get; private set; }
-        public float DrawOffsetX { get; private set; }
-        public float DrawOffsetY { get; private set; }
         public Point Spawn { get; private set; }
+
+        private Vector2 _drawOffset;
 
         public World(int tilesWidth, int tilesHeight)
         {
@@ -80,7 +80,7 @@ namespace Tile_Engine
 
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            spriteBatch.Draw(Texture, new Vector2(DrawOffsetX, DrawOffsetY), Color.White);
+            spriteBatch.Draw(Texture, _drawOffset, Color.White);
         }
 
         public bool InChunkBounds(int chunkX, int chunkY) { return ((chunkX >= 0) && (chunkY >= 0) && (chunkX < ChunksWidth) && (chunkY < ChunksHeight)); }
@@ -92,7 +92,7 @@ namespace Tile_Engine
             float cameraOffsetX = (cameraX - screenWidthOver2);
             int minChunkX = (int)((cameraOffsetX / Tile.Size) / Chunk.Size);
             CameraX = cameraX;
-            DrawOffsetX = (((minChunkX * Chunk.TextureSize) - cameraOffsetX) - Chunk.BufferXTextureSize);
+            _drawOffset.X = ((((minChunkX * Chunk.TextureSize) - cameraOffsetX) - Chunk.BufferXTextureSize) * Game1.VirtualScale);
             RawChunksMinX = (minChunkX - Chunk.BufferX);
             RawChunksMaxX = (((int)((cameraX + screenWidthOver2) / Tile.Size) >> Chunk.Bits) + 1 + Chunk.BufferX);
             ChunksMinX = Math.Max(0, RawChunksMinX);
@@ -100,7 +100,7 @@ namespace Tile_Engine
             float cameraOffsetY = (cameraY - screenHeightOver2);
             int minChunkY = (int)((cameraOffsetY / Tile.Size) / Chunk.Size);
             CameraY = cameraY;
-            DrawOffsetY = (((minChunkY * Chunk.TextureSize) - cameraOffsetY) - Chunk.BufferYTextureSize);
+            _drawOffset.Y = ((((minChunkY * Chunk.TextureSize) - cameraOffsetY) - Chunk.BufferYTextureSize) * Game1.VirtualScale);
             RawChunksMinY = (minChunkY - Chunk.BufferY);
             RawChunksMaxY = (((int)((cameraY + screenHeightOver2) / Tile.Size) >> Chunk.Bits) + 1 + Chunk.BufferY);
             ChunksMinY = Math.Max(0, RawChunksMinY);

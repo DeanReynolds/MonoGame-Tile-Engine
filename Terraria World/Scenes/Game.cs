@@ -12,7 +12,7 @@ namespace Terraria_World.Scenes
         public Game(int maxPlayers)
         {
             _world = WorldGenerator.Generate(1750, 900);
-            _camera = new Camera(new Vector2((_world.Spawn.X * Tile.Size), (_world.Spawn.Y * Tile.Size)));
+            _camera = new Camera(new Vector2((_world.Spawn.X * Tile.Size), (_world.Spawn.Y * Tile.Size)), 0, Game1.VirtualScale);
         }
 
         public override void Update(GameTime gameTime)

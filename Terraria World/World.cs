@@ -43,8 +43,9 @@ namespace Terraria_World
         public int OldChunksMaxY { get; private set; }
         public float CameraX { get; private set; }
         public float CameraY { get; private set; }
-        public float DrawOffsetX { get; private set; }
-        public float DrawOffsetY { get; private set; }
+
+        private Vector2 _foreDrawOffset;
+        private Vector2 _backDrawOffset;
 
         public World(int tilesWidth, int tilesHeight)
         {
@@ -97,8 +98,8 @@ namespace Terraria_World
 
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            spriteBatch.Draw(BackTexture, new Vector2(DrawOffsetX, DrawOffsetY), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 1);
-            spriteBatch.Draw(ForeTexture, new Vector2(DrawOffsetX, DrawOffsetY), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+            spriteBatch.Draw(BackTexture, _backDrawOffset, null, Color.White, 0, Vector2.Zero, Game1.VirtualScale, SpriteEffects.None, 1);
+            spriteBatch.Draw(ForeTexture, _foreDrawOffset, null, Color.White, 0, Vector2.Zero, Game1.VirtualScale, SpriteEffects.None, 0);
         }
 
         public bool InChunkBounds(int chunkX, int chunkY) { return ((chunkX >= 0) && (chunkY >= 0) && (chunkX < ChunksWidth) && (chunkY < ChunksHeight)); }
@@ -110,7 +111,8 @@ namespace Terraria_World
             float cameraOffsetX = (cameraX - screenWidthOver2);
             int minChunkX = (int)((cameraOffsetX / Tile.Size) / Chunk.Size);
             CameraX = cameraX;
-            DrawOffsetX = (((minChunkX * Chunk.ForeTextureSize) - cameraOffsetX) - Chunk.BufferXTextureSize);
+            _foreDrawOffset.X = ((((minChunkX * Chunk.ForeTextureSize) - cameraOffsetX) - Chunk.BufferXForeTextureSize) * Game1.VirtualScale);
+            _backDrawOffset.X = (_foreDrawOffset.X - Tile.Size);
             RawChunksMinX = (minChunkX - Chunk.BufferX);
             RawChunksMaxX = (((int)((cameraX + screenWidthOver2) / Tile.Size) >> Chunk.Bits) + 1 + Chunk.BufferX);
             ChunksMinX = Math.Max(0, RawChunksMinX);
@@ -118,7 +120,8 @@ namespace Terraria_World
             float cameraOffsetY = (cameraY - screenHeightOver2);
             int minChunkY = (int)((cameraOffsetY / Tile.Size) / Chunk.Size);
             CameraY = cameraY;
-            DrawOffsetY = (((minChunkY * Chunk.ForeTextureSize) - cameraOffsetY) - Chunk.BufferYTextureSize);
+            _foreDrawOffset.Y = ((((minChunkY * Chunk.ForeTextureSize) - cameraOffsetY) - Chunk.BufferYForeTextureSize) * Game1.VirtualScale);
+            _backDrawOffset.Y = (_foreDrawOffset.Y - Tile.Size);
             RawChunksMinY = (minChunkY - Chunk.BufferY);
             RawChunksMaxY = (((int)((cameraY + screenHeightOver2) / Tile.Size) >> Chunk.Bits) + 1 + Chunk.BufferY);
             ChunksMinY = Math.Max(0, RawChunksMinY);
@@ -201,7 +204,7 @@ namespace Terraria_World
                     for (int y = RawChunksMinY; y < RawChunksMaxY; y++)
                         if ((y >= 0) && (y < ChunksHeight))
                         {
-                            spriteBatch.Draw(Chunks[x, y].BackTexture, new Rectangle((j - Tile.BackTextureSizeOver4), (k - Tile.BackTextureSizeOver4), Chunk.BackTextureSize, Chunk.BackTextureSize), Color.White);
+                            spriteBatch.Draw(Chunks[x, y].BackTexture, new Rectangle(j, k, Chunk.BackTextureSize, Chunk.BackTextureSize), Color.White);
                             k += Chunk.ForeTextureSize;
                         }
                     j += Chunk.ForeTextureSize;
