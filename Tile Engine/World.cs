@@ -80,7 +80,7 @@ namespace Tile_Engine
 
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {
-            spriteBatch.Draw(Texture, _drawOffset, Color.White);
+            spriteBatch.Draw(Texture, _drawOffset, null, Color.White, 0, Vector2.Zero, Game1.VirtualScale, SpriteEffects.None, 1);
         }
 
         public bool InChunkBounds(int chunkX, int chunkY) { return ((chunkX >= 0) && (chunkY >= 0) && (chunkX < ChunksWidth) && (chunkY < ChunksHeight)); }
