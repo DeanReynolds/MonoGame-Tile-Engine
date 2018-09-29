@@ -38,8 +38,8 @@ namespace Tile_Engine
             get { return _angle; }
             set
             {
-                _rotationZ.M22 = _rotationZ.M11 = (float)System.Math.Cos(_angle = value);
-                _rotationZ.M21 = -(_rotationZ.M12 = (float)System.Math.Sin(_angle));
+                _rotationZ.M22 = _rotationZ.M11 = (float)System.Math.Cos(-(_angle = value));
+                _rotationZ.M21 = -(_rotationZ.M12 = (float)System.Math.Sin(-_angle));
                 UpdatePositionInTransform();
                 UpdateScaleInTransform();
             }
@@ -128,8 +128,8 @@ namespace Tile_Engine
             _transform.M21 = ((_scale.M21 * _rotationZ.M11) + (_scale.M22 * _rotationZ.M21));
             _transform.M22 = ((_scale.M21 * _rotationZ.M12) + (_scale.M22 * _rotationZ.M22));
             _n27 = (float)(1d / ((double)_transform.M11 * _transform.M22 + (double)_transform.M12 * -_transform.M21));
-            _transformInvert.M11 = (_transform.M22 * _n27);
-            _transformInvert.M21 = (-_transform.M21 * _n27);
+            _transformInvert.M11 = (float)((double)_transform.M22 * _n27);
+            _transformInvert.M21 = (float)((double)-_transform.M21 * _n27);
             _transformInvert.M12 = (float)-((double)_transform.M12 * _n27);
             _transformInvert.M22 = (float)((double)_transform.M11 * _n27);
         }
