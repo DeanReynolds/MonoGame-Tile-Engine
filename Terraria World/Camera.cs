@@ -5,8 +5,6 @@ namespace Terraria_World
 {
     public class Camera
     {
-        public static Vector2 MouseOffset;
-
         public float X
         {
             get { return _position.X; }
@@ -95,7 +93,7 @@ namespace Terraria_World
             _positionTranslation = Matrix.CreateTranslation(-(_position.X = position.X), -(_position.Y = position.Y), 0);
             _rotationZ = Matrix.CreateRotationZ(-(_angle = angle));
             _scale = Matrix.CreateScale(scale, scale, 1);
-            _screenSize = new Vector2(Game1.VirtualWidth, Game1.VirtualHeight);
+            _screenSize = new Vector2(Game1.Viewport.Width, Game1.Viewport.Height);
             _screenTranslation = Matrix.CreateTranslation((_screenSize.X / 2f), (_screenSize.Y / 2f), 0);
             _transform = (_positionTranslation * _rotationZ * _scale * _screenTranslation);
             _n27 = (float)(1d / ((double)_transform.M11 * _transform.M22 + (double)_transform.M12 * -_transform.M21));
@@ -107,8 +105,8 @@ namespace Terraria_World
         {
             if (!mouseState.HasValue)
                 mouseState = Mouse.GetState();
-            float mouseX = (mouseState.Value.Position.X - MouseOffset.X);
-            float mouseY = (mouseState.Value.Position.Y - MouseOffset.Y);
+            float mouseX = mouseState.Value.Position.X;
+            float mouseY = mouseState.Value.Position.Y;
             _mousePosition.X = ((mouseX * _transformInvert.M11) + (mouseY * _transformInvert.M21) + _transformInvert.M41);
             _mousePosition.Y = ((mouseX * _transformInvert.M12) + (mouseY * _transformInvert.M22) + _transformInvert.M42);
         }
