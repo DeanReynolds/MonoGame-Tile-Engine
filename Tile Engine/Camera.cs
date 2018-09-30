@@ -40,8 +40,8 @@ namespace Tile_Engine
             {
                 _rotationZ.M22 = _rotationZ.M11 = (float)System.Math.Cos(-(_angle = value));
                 _rotationZ.M21 = -(_rotationZ.M12 = (float)System.Math.Sin(-_angle));
-                UpdatePositionInTransform();
                 UpdateScaleInTransform();
+                UpdatePositionInTransform();
             }
         }
         public float Scale
@@ -50,8 +50,8 @@ namespace Tile_Engine
             set
             {
                 _scale.M11 = _scale.M22 = value;
-                UpdatePositionInTransform();
                 UpdateScaleInTransform();
+                UpdatePositionInTransform();
             }
         }
         public Vector2 ScreenSize
@@ -90,15 +90,64 @@ namespace Tile_Engine
         public Camera(float angle = 0, float scale = 1) : this(Vector2.Zero, angle, scale) { }
         public Camera(Vector2 position, float angle = 0, float scale = 1)
         {
-            _positionTranslation = Matrix.CreateTranslation(-(_position.X = position.X), -(_position.Y = position.Y), 0);
-            _rotationZ = Matrix.CreateRotationZ(-(_angle = angle));
-            _scale = Matrix.CreateScale(scale, scale, 1);
+            _positionTranslation = new Matrix
+            {
+                M11 = 1,
+                M22 = 1,
+                M33 = 1,
+                M41 = -(_position.X = position.X),
+                M42 = -(_position.Y = position.Y),
+                M44 = 1
+            };
+            float rotVal1 = (float)System.Math.Cos(-(_angle = angle));
+            float rotVal2 = (float)System.Math.Sin(-_angle);
+            _rotationZ = new Matrix
+            {
+                M11 = rotVal1,
+                M12 = rotVal2,
+                M21 = -rotVal2,
+                M22 = rotVal1,
+                M33 = 1,
+                M44 = 1
+            };
+            _scale = new Matrix
+            {
+                M11 = scale,
+                M22 = scale,
+                M33 = 1,
+                M44 = 1
+            };
             _screenSize = new Vector2(Game1.Viewport.Width, Game1.Viewport.Height);
-            _screenTranslation = Matrix.CreateTranslation((_screenSize.X / 2f), (_screenSize.Y / 2f), 0);
-            _transform = (_positionTranslation * _rotationZ * _scale * _screenTranslation);
-            _n27 = (float)(1d / ((double)_transform.M11 * _transform.M22 + (double)_transform.M12 * -_transform.M21));
-            _transformInvert = Matrix.Invert(_transform);
-            _projection = Matrix.CreateOrthographicOffCenter(0, _screenSize.X, _screenSize.Y, 0, 0, 1);
+            _screenTranslation = new Matrix
+            {
+                M11 = 1,
+                M22 = 1,
+                M33 = 1,
+                M41 = (_screenSize.X / 2),
+                M42 = (_screenSize.Y / 2),
+                M44 = 1
+            };
+            _transform = new Matrix
+            {
+                M33 = 1,
+                M44 = 1
+            };
+            _transformInvert = new Matrix
+            {
+                M33 = 1,
+                M44 = 1
+            };
+            UpdateScaleInTransform();
+            UpdatePositionInTransform();
+            _projection = new Matrix
+            {
+                M11 = (float)(2d / _screenSize.X),
+                M22 = (float)(2d / -_screenSize.Y),
+                M33 = -1,
+                M41 = -1,
+                M42 = 1,
+                M44 = 1
+            };
         }
 
         public void UpdateMousePosition(MouseState? mouseState = null)
