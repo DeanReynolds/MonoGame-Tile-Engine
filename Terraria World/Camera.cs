@@ -166,7 +166,7 @@ namespace Terraria_World
             _invertM42 = (float)(((double)_transform.M11 * -_transform.M42 - (double)_transform.M12 * -_transform.M41) * _n27);
         }
 
-        public void UpdateScaleInTransform()
+        private void UpdateScaleInTransform()
         {
             _transform.M11 = (_scale.X * _rotM11);
             _transform.M12 = (_scale.Y * _rotM12);
