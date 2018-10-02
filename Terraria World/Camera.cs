@@ -64,8 +64,6 @@ namespace Terraria_World
                 UpdatePositionInTransform();
                 _projection.M11 = (float)(2d / _screenSize.X);
                 _projection.M22 = (float)(2d / -_screenSize.Y);
-                _projection.M41 = (float)((double)_screenSize.X / -_screenSize.X);
-                _projection.M42 = (float)((double)_screenSize.Y / _screenSize.Y);
             }
         }
 
