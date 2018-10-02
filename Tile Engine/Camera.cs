@@ -49,7 +49,7 @@ namespace Tile_Engine
                 UpdatePositionInTransform();
             }
         }
-        public float Scale
+        public Vector2 Scale
         {
             get { return _scale; }
             set
@@ -89,7 +89,7 @@ namespace Tile_Engine
         private float _rotY1;
         private float _rotX2;
         private float _rotY2;
-        private float _scale;
+        private Vector2 _scale;
         private double _n27;
         private Matrix _transform;
         private float _invertM11;
@@ -101,8 +101,11 @@ namespace Tile_Engine
         private Vector2 _mousePosition;
         private Matrix _projection;
 
-        public Camera(float angle = 0, float scale = 1) : this(Vector2.Zero, angle, scale) { }
-        public Camera(Vector2 position, float angle = 0, float scale = 1)
+        public Camera(float angle = 0, float scale = 1) : this(Vector2.Zero, angle, new Vector2(scale)) { }
+        public Camera(float angle, Vector2 scale) : this(Vector2.Zero, angle, scale) { }
+        public Camera(Vector2 position, float angle = 0, float scale = 1) : this(position, angle, new Vector2(scale)) { }
+        public Camera(Vector2 position, float angle) : this(position, angle, Vector2.One) { }
+        public Camera(Vector2 position, float angle, Vector2 scale)
         {
             _position = position;
             _rotM11 = (float)System.Math.Cos(-(_angle = angle));
@@ -143,14 +146,14 @@ namespace Tile_Engine
 
         private void UpdateRotX()
         {
-            float m41 = (-_position.X * _scale);
+            float m41 = (-_position.X * _scale.X);
             _rotX1 = (m41 * _rotM11);
             _rotX2 = (m41 * _rotM12);
         }
 
         private void UpdateRotY()
         {
-            float m42 = (-_position.Y * _scale);
+            float m42 = (-_position.Y * _scale.Y);
             _rotY1 = (m42 * -_rotM12);
             _rotY2 = (m42 * _rotM11);
         }
@@ -165,14 +168,14 @@ namespace Tile_Engine
 
         public void UpdateScaleInTransform()
         {
-            _transform.M11 = (_scale * _rotM11);
-            _transform.M12 = (_scale * _rotM12);
-            _transform.M21 = (_scale * -_rotM12);
-            _transform.M22 = (_scale * _rotM11);
+            _transform.M11 = (_scale.X * _rotM11);
+            _transform.M12 = (_scale.Y * _rotM12);
+            _transform.M21 = (_scale.X * -_rotM12);
+            _transform.M22 = (_scale.Y * _rotM11);
             _n27 = (1d / ((double)_transform.M11 * _transform.M22 + (double)_transform.M12 * -_transform.M21));
             _invertM11 = (float)(_transform.M22 * _n27);
-            _invertM12 = (float)-(_transform.M12 * _n27);
             _invertM21 = (float)(-_transform.M21 * _n27);
+            _invertM12 = (float)-(_transform.M12 * _n27);
             _invertM22 = (float)(_transform.M11 * _n27);
         }
     }
