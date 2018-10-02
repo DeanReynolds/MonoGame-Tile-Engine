@@ -11,7 +11,8 @@ namespace Tile_Engine
             set
             {
                 _position.X = value;
-                UpdateXPositionInTransform();
+                UpdateRotX();
+                UpdatePositionInTransform();
             }
         }
         public float Y
@@ -20,7 +21,8 @@ namespace Tile_Engine
             set
             {
                 _position.Y = value;
-                UpdateYPositionInTransform();
+                UpdateRotY();
+                UpdatePositionInTransform();
             }
         }
         public Vector2 Position
@@ -29,6 +31,8 @@ namespace Tile_Engine
             set
             {
                 _position = value;
+                UpdateRotX();
+                UpdateRotY();
                 UpdatePositionInTransform();
             }
         }
@@ -40,6 +44,8 @@ namespace Tile_Engine
                 _rotM11 = (float)System.Math.Cos(-(_angle = value));
                 _rotM12 = (float)System.Math.Sin(-_angle);
                 UpdateScaleInTransform();
+                UpdateRotX();
+                UpdateRotY();
                 UpdatePositionInTransform();
             }
         }
@@ -50,6 +56,8 @@ namespace Tile_Engine
             {
                 _scale = value;
                 UpdateScaleInTransform();
+                UpdateRotX();
+                UpdateRotY();
                 UpdatePositionInTransform();
             }
         }
@@ -84,15 +92,19 @@ namespace Tile_Engine
         private float _scale;
         private double _n27;
         private Matrix _transform;
-        private Matrix _transformInvert;
+        private float _invertM11;
+        private float _invertM12;
+        private float _invertM21;
+        private float _invertM22;
+        private float _invertM41;
+        private float _invertM42;
         private Vector2 _mousePosition;
         private Matrix _projection;
 
         public Camera(float angle = 0, float scale = 1) : this(Vector2.Zero, angle, scale) { }
         public Camera(Vector2 position, float angle = 0, float scale = 1)
         {
-            _position.X = position.X;
-            _position.Y = position.Y;
+            _position = position;
             _rotM11 = (float)System.Math.Cos(-(_angle = angle));
             _rotM12 = (float)System.Math.Sin(-_angle);
             _scale = scale;
@@ -104,12 +116,9 @@ namespace Tile_Engine
                 M33 = 1,
                 M44 = 1
             };
-            _transformInvert = new Matrix
-            {
-                M33 = 1,
-                M44 = 1
-            };
             UpdateScaleInTransform();
+            UpdateRotX();
+            UpdateRotY();
             UpdatePositionInTransform();
             _projection = new Matrix
             {
@@ -128,44 +137,30 @@ namespace Tile_Engine
                 mouseState = Mouse.GetState();
             float mouseX = mouseState.Value.Position.X;
             float mouseY = mouseState.Value.Position.Y;
-            _mousePosition.X = ((mouseX * _transformInvert.M11) + (mouseY * _transformInvert.M21) + _transformInvert.M41);
-            _mousePosition.Y = ((mouseX * _transformInvert.M12) + (mouseY * _transformInvert.M22) + _transformInvert.M42);
+            _mousePosition.X = ((mouseX * _invertM11) + (mouseY * _invertM21) + _invertM41);
+            _mousePosition.Y = ((mouseX * _invertM12) + (mouseY * _invertM22) + _invertM42);
         }
 
-        private void UpdateXPositionInTransform()
+        private void UpdateRotX()
         {
             float m41 = (-_position.X * _scale);
             _rotX1 = (m41 * _rotM11);
             _rotX2 = (m41 * _rotM12);
-            _transform.M41 = ((_rotX1 + _rotY1) + _screenCenter.X);
-            _transform.M42 = ((_rotX2 + _rotY2) + _screenCenter.Y);
-            _transformInvert.M41 = (float)(-((double)_transform.M21 * -_transform.M42 - (double)_transform.M22 * -_transform.M41) * _n27);
-            _transformInvert.M42 = (float)(((double)_transform.M11 * -_transform.M42 - (double)_transform.M12 * -_transform.M41) * _n27);
         }
 
-        private void UpdateYPositionInTransform()
+        private void UpdateRotY()
         {
             float m42 = (-_position.Y * _scale);
             _rotY1 = (m42 * -_rotM12);
             _rotY2 = (m42 * _rotM11);
-            _transform.M41 = ((_rotX1 + _rotY1) + _screenCenter.X);
-            _transform.M42 = ((_rotX2 + _rotY2) + _screenCenter.Y);
-            _transformInvert.M41 = (float)(-((double)_transform.M21 * -_transform.M42 - (double)_transform.M22 * -_transform.M41) * _n27);
-            _transformInvert.M42 = (float)(((double)_transform.M11 * -_transform.M42 - (double)_transform.M12 * -_transform.M41) * _n27);
         }
 
         private void UpdatePositionInTransform()
         {
-            float m41 = (-_position.X * _scale);
-            float m42 = (-_position.Y * _scale);
-            _rotX1 = (m41 * _rotM11);
-            _rotY1 = (m42 * -_rotM12);
-            _rotX2 = (m41 * _rotM12);
-            _rotY2 = (m42 * _rotM11);
             _transform.M41 = ((_rotX1 + _rotY1) + _screenCenter.X);
             _transform.M42 = ((_rotX2 + _rotY2) + _screenCenter.Y);
-            _transformInvert.M41 = (float)(-((double)_transform.M21 * -_transform.M42 - (double)_transform.M22 * -_transform.M41) * _n27);
-            _transformInvert.M42 = (float)(((double)_transform.M11 * -_transform.M42 - (double)_transform.M12 * -_transform.M41) * _n27);
+            _invertM41 = (float)(-((double)_transform.M21 * -_transform.M42 - (double)_transform.M22 * -_transform.M41) * _n27);
+            _invertM42 = (float)(((double)_transform.M11 * -_transform.M42 - (double)_transform.M12 * -_transform.M41) * _n27);
         }
 
         public void UpdateScaleInTransform()
@@ -175,10 +170,10 @@ namespace Tile_Engine
             _transform.M21 = (_scale * -_rotM12);
             _transform.M22 = (_scale * _rotM11);
             _n27 = (1d / ((double)_transform.M11 * _transform.M22 + (double)_transform.M12 * -_transform.M21));
-            _transformInvert.M11 = (float)(_transform.M22 * _n27);
-            _transformInvert.M21 = (float)(-_transform.M21 * _n27);
-            _transformInvert.M12 = (float)-(_transform.M12 * _n27);
-            _transformInvert.M22 = (float)(_transform.M11 * _n27);
+            _invertM11 = (float)(_transform.M22 * _n27);
+            _invertM12 = (float)-(_transform.M12 * _n27);
+            _invertM21 = (float)(-_transform.M21 * _n27);
+            _invertM22 = (float)(_transform.M11 * _n27);
         }
     }
 }
